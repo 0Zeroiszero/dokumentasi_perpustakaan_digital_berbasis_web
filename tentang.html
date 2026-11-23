@@ -23,7 +23,7 @@
   </div>
 </header>
 <main id="main" class="wrap">
-<nav class="crumbs" aria-label="Posisi"><a href="index.html">Beranda</a><span class="sep">/</span><span>Tentang</span></nav><header class="page-head"><h1>Tentang PustakaDigital</h1><p class="lead">Proyek kelompok kuliah: perpustakaan digital baca online berbasis web. Halaman ini merangkum README resmi repo <code>0Zeroiszero/Perpustakaan-berbasis-web</code> — latar belakang, tujuan, fitur, teknologi, dan struktur folder — supaya dokumentasi bisnis dan konteks proyek ada di satu tempat.</p></header>
+<nav class="crumbs" aria-label="Posisi"><a href="index.html">Beranda</a><span class="sep">/</span><span>Tentang</span></nav><header class="page-head"><h1>Tentang PustakaDigital</h1><p class="lead">Rangkuman README resmi repo <code>0Zeroiszero/Perpustakaan-berbasis-web</code> — latar, tujuan, fitur, teknologi, struktur folder, dan keputusan teknis — di satu tempat.</p></header>
 <section class="sec cols-2" id="latar">
   <div class="card pad"><h3>Latar Belakang</h3><ul class="plain"><li>Perkembangan teknologi mendorong layanan perpustakaan beralih ke bentuk digital.</li><li>Perpustakaan konvensional terbatas oleh jam buka, lokasi, dan jumlah salinan buku cetak, sehingga koleksi tidak selalu bisa diakses kapan saja.</li><li>Proses peminjaman dan pengembalian buku fisik menambah langkah manual bagi pengguna maupun pengelola.</li><li>Pengguna membutuhkan bacaan yang cepat dicari dan bisa dilanjutkan kapan saja langsung dari browser.</li><li>Karena itu PustakaDigital dikembangkan sepenuhnya sebagai perpustakaan digital: koleksinya e-book, tanpa koleksi fisik, peminjaman, maupun pengembalian buku cetak.</li><li>Sistem menyediakan katalog, pencarian, detail buku, rak pribadi, serta dashboard user dan admin untuk mendukung pengelolaan koleksi.</li></ul></div>
   <div class="card pad" id="tujuan"><h3>Tujuan</h3><ul class="plain"><li>Menyediakan akses koleksi e-book kapan saja, tanpa terikat jam buka atau kunjungan fisik.</li><li>Mempermudah pengguna menemukan buku melalui pencarian judul/penulis dan filter kategori.</li><li>Mempermudah pengguna menyimpan buku ke rak pribadi serta melanjutkan bacaan dari halaman terakhir.</li><li>Mempermudah admin mengelola data buku, penerbit, penulis, dan status akun dalam satu tempat.</li><li>Menghilangkan proses manual khas perpustakaan fisik, seperti peminjaman, pengembalian, dan denda, karena seluruh koleksinya digital.</li><li>Menyediakan sistem perpustakaan yang cepat, praktis, dan terstruktur.</li></ul></div>
@@ -38,8 +38,7 @@
 </section>
 <section class="sec" id="struktur">
   <h2>Struktur Folder</h2>
-  <p class="lead">Hasil rombak total <code>optl/rombak-total</code>: <code>public/</code> sebagai DocumentRoot efektif,
-  berkas PDF dan kode rahasia di luar <code>public/</code>.</p>
+  <p class="lead">Rombak total <code>optl/rombak-total</code>: <code>public/</code> sebagai DocumentRoot; PDF &amp; kode rahasia di luarnya.</p>
   <div class="codebox"><pre><code>Perpustakaan-berbasis-web/
 ├── public/                      ← DocumentRoot efektif (BASE_URL)
 │   ├── index.php                beranda (2 pintu masuk: Katalog &amp; Rak Saya)
@@ -64,7 +63,7 @@
 </section>
 <section class="sec" id="keputusan">
   <h2>Keputusan Teknis Mengikat</h2>
-  <p class="lead">Disepakati saat perencanaan rombak total (RENCANA-ROMBAK-TOTAL, berlaku menyingkirkan PDF jika disebut).</p>
+  <p class="lead">Disepakati saat perencanaan rombak total (RENCANA-ROMBAK-TOTAL).</p>
   <ul class="rule-list dec"><li><b>mysqli prepared statements, bukan PDO</b><p>Tim belum belajar PDO; pola helper lama q()/rows()/row()/scalar()/e() dipertahankan di semua halaman.</p></li><li><b>Tanpa ketergantungan .htaccess</b><p>Tim belum belajar mod_rewrite; slug tetap identitas publik lewat query string (book-detail.php?slug=…). Tidak ada file .htaccess sama sekali.</p></li><li><b>URL migrasi penuh tanpa redirect</b><p>Belum produksi, jadi tidak perlu kompatibilitas URL lama.</p></li><li><b>Nama database optl_pustaka</b><p>Branch optl/rombak-total; dump ramah phpMyAdmin dengan seed data demo.</p></li><li><b>Soft-delete, bukan hapus keras</b><p>Buku/akun dinonaktifkan lewat is_active; hapus keras hanya untuk item rak; master tidak dihapus sama sekali.</p></li><li><b>PDF-saja + PDF.js</b><p>Satu judul satu berkas; format lain dikonversi manual di luar sistem; MODUL VII bukan rujukan.</p></li><li><b>Smoke test menyeluruh</b><p>tests/smoke.php menguji 'semua yang possible', bukan sampel; viewport.py menguji tampilan 320–1366px.</p></li><li><b>Layout public/ sebagai DocumentRoot</b><p>storage/ dan includes/ berada di luar public sehingga tidak punya URL publik.</p></li></ul>
 </section>
 </main>

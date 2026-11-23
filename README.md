@@ -15,7 +15,7 @@ digital baca online (branch `optl/rombak-total`, database `optl_pustaka`).
 | `business-rules.html` | BR-01–BR-08, state diagram lifecycle, matriks akses, turunan data, pemetaan verifikasi |
 | `erd.html` | ERD mermaid interaktif (7 tabel + VIEW), aturan relasi, penjelasan tabel |
 | `sql.html` | 10 blok query SQL asli (VIEW, katalog, rak, upsert, progres, reset, guard, slug, DDL) |
-| `live-coding.html` | 8 snippet HTML+PHP+JS tanpa CSS + **expected output** di browser frame |
+| `live-coding.html` | 15 contoh HTML+PHP+JS tanpa CSS + **expected output** di browser frame |
 | `screenshots.html` | 33 screenshot asli `docs/screenshots` dengan filter kelompok + lightbox |
 | `tentang.html` | Latar belakang, tujuan, fitur, teknologi, struktur folder, keputusan teknis |
 | `spesifikasi.html` | SPEC-DB…SPEC-10 + cara menjalankan `tests/smoke.php` & `tests/viewport.py` |

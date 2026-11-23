@@ -23,15 +23,13 @@
   </div>
 </header>
 <main id="main" class="wrap">
-<nav class="crumbs" aria-label="Posisi"><a href="index.html">Beranda</a><span class="sep">/</span><span>Query SQL</span></nav><header class="page-head"><h1>Query SQL yang Dipakai Aplikasi</h1><p class="lead">Seluruh query di halaman ini disalin langsung dari kode aplikasi dan dump <code>for_demo_optl_pustaka.sql</code> — bukan rekaan. Semuanya lewat prepared statement, sesuai BR-02.4. Impor dump lewat phpMyAdmin atau <code>mysql -uroot &lt; database/for_demo_optl_pustaka.sql</code>.</p></header>
+<nav class="crumbs" aria-label="Posisi"><a href="index.html">Beranda</a><span class="sep">/</span><span>Query SQL</span></nav><header class="page-head"><h1>Query SQL yang Dipakai Aplikasi</h1><p class="lead">Disalin langsung dari kode aplikasi dan dump <code>for_demo_optl_pustaka.sql</code> — bukan rekaan. Semua lewat prepared statement (BR-02.4). Impor: phpMyAdmin atau <code>mysql -uroot &lt; database/for_demo_optl_pustaka.sql</code>.</p></header>
 <section class="card pad" id="db-demo">
   <h2>Database demo: <code>optl_pustaka</code></h2>
-  <p>Dump <code>for_demo_optl_pustaka.sql</code> berisi struktur + data demo yang benar-benar dipakai
-  saat demo: 11 akun (termasuk admin &amp; user demo), 11 penulis, 6 penerbit, 10 genre, 11 buku lengkap
-  dengan berkas dan checksum SHA-256, 14 baris rak, dan 11 baris progres. File dump ikut disertakan di
-  folder <code>database/</code> repo dokumentasi ini.</p>
-  <p class="muted">Koneksi default di <code>includes/config.php</code>: host 127.0.0.1, user root tanpa
-  password (Laragon). Nama file dump persis seperti yang dipakai kelompok: <code>for_demo_optl_pustaka.sql</code>.</p>
+  <p>Dump berisi struktur + data demo: 11 akun, 11 penulis, 6 penerbit, 10 genre, 11 buku
+  (berkas + checksum SHA-256), 14 baris rak, 11 baris progres. File dump ada di folder
+  <code>database/</code> repo dokumentasi.</p>
+  <p class="muted">Koneksi: <code>includes/config.php</code> — host 127.0.0.1, root tanpa password (Laragon).</p>
 </section>
 
 <section class="card pad sql-card" id="sql-view">

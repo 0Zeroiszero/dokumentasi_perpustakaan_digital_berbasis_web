@@ -23,7 +23,7 @@
   </div>
 </header>
 <main id="main" class="wrap">
-<nav class="crumbs" aria-label="Posisi"><a href="index.html">Beranda</a><span class="sep">/</span><span>Spesifikasi</span></nav><header class="page-head"><h1>SPEC Ticket & Pengujian Otomatis</h1><p class="lead">Rombak total dieksekusi lewat sebelas ticket SPEC lokal di <code>docs/specs/</code> — masing-masing adalah kontrak verifikasi sebelum commit. Dua skrip uji menjaga aturan tetap benar: <code>tests/smoke.php</code> (perilaku) dan <code>tests/viewport.py</code> (tampilan).</p></header>
+<nav class="crumbs" aria-label="Posisi"><a href="index.html">Beranda</a><span class="sep">/</span><span>Spesifikasi</span></nav><header class="page-head"><h1>SPEC Ticket & Pengujian Otomatis</h1><p class="lead">11 ticket SPEC di <code>docs/specs/</code> — kontrak verifikasi sebelum commit. Dua skrip uji: <code>tests/smoke.php</code> (perilaku) dan <code>tests/viewport.py</code> (tampilan).</p></header>
 <section class="sec" id="daftar-spec"><div class="grid-2">
 <div class="card pad spec">
   <header><span class="badge">SPEC-DB</span><h3>Fondasi database, berkas, dan helper</h3></header>
@@ -73,18 +73,26 @@
   <h2>Menjalankan Uji</h2>
   <div class="cols-2">
     <div class="card pad">
-      <h3>tests/smoke.php — uji perilaku menyeluruh</h3>
-      <p>Butuh aplikasi berjalan (Laragon/XAMPP) dan database <code>optl_pustaka</code> terimpor. Jalankan lewat
-      URL <code>http://localhost/Perpustakaan-berbasis-web/tests/smoke.php</code> atau
-      <code>php tests/smoke.php</code>. Menguji: login gagal/sukses/nonaktif, CSRF 419, penolakan
-      <code>?next=</code> eksternal, lifecycle status (system→reading, auto-finished, user tidak diubah, reset),
-      pencarian katalog &amp; Rak Saya, upload PDF palsu/valid, sampul, slug, datalist, guard admin, dan reset password.</p>
+      <h3>tests/smoke.php — uji perilaku</h3>
+      <p class="muted">Butuh aplikasi berjalan + DB <code>optl_pustaka</code>. Jalankan via URL <code>…/tests/smoke.php</code> atau <code>php tests/smoke.php</code>. Menguji:</p>
+      <ul class="plain">
+        <li>Login gagal/sukses/nonaktif, CSRF 419, tolak <code>?next=</code> eksternal</li>
+        <li>Lifecycle status: system→reading, auto-finished, user tak diubah, reset</li>
+        <li>Pencarian katalog &amp; Rak Saya</li>
+        <li>Upload PDF palsu/valid, sampul, slug, datalist</li>
+        <li>Guard admin &amp; reset password</li>
+      </ul>
     </div>
     <div class="card pad">
       <h3>tests/viewport.py — uji tampilan 320–1366px</h3>
-      <p>Butuh Python + Playwright dan aplikasi berjalan. Menguji: render DPR 2 tetap tajam, kanvas PDF berisi,
-      iframe auto-save terkirim, topbar mobile (subjudul hilang, avatar bulat), dropdown tidak overflow,
-      modal bisa discroll, judul kartu ter-clamp 2 baris, dan layout 320–1366px tidak rusak.</p>
+      <p class="muted">Butuh Python + Playwright + aplikasi berjalan. Menguji:</p>
+      <ul class="plain">
+        <li>Render DPR 2 tetap tajam; kanvas PDF berisi</li>
+        <li>Iframe auto-save terkirim</li>
+        <li>Topbar mobile: subjudul hilang, avatar bulat</li>
+        <li>Dropdown &amp; modal tidak overflow, bisa discroll</li>
+        <li>Judul kartu ter-clamp 2 baris; layout 320–1366px utuh</li>
+      </ul>
     </div>
   </div>
 </section>

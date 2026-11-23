@@ -22,6 +22,7 @@ a{color:var(--accent);text-decoration:none}
 a:hover{text-decoration:underline}
 code{font-family:var(--mono);font-size:.86em;background:var(--primary-soft);
   color:#d9d2ff;padding:.12em .4em;border-radius:.4em;word-break:break-word}
+.stat code{word-break:normal;overflow-wrap:normal}
 pre>code{background:none;padding:0;word-break:normal}
 h1,h2,h3{line-height:1.25;letter-spacing:-.02em}
 h1{font-size:clamp(1.7rem,6.5vw,2.7rem);margin:.2em 0}
@@ -71,8 +72,12 @@ h3{font-size:1.05rem;margin:0 0 .4em}
   background:var(--primary-soft);border:1px solid var(--border);padding:.3rem .8rem;
   border-radius:999px;margin-bottom:.8rem}
 .dot{color:var(--primary)}
-.lead{color:var(--muted);max-width:62ch;margin:.3em 0 .9em}
+.lead{color:var(--muted);max-width:68ch;margin:.3em 0 .9em}
 .hero .lead{font-size:1.02rem}
+/* clean-UI (Swiss/minimal): ukuran baris panjang terkendali + ritme section */
+.page-head .lead{max-width:66ch}
+main p{max-width:72ch}
+main .card p,main .term p,main .foot p{max-width:none}
 .hero-cta{display:flex;flex-wrap:wrap;gap:.7rem;margin:1.1rem 0 .4rem}
 
 /* ---------- buttons & chips ---------- */
@@ -243,8 +248,19 @@ tbody tr:hover td{background:rgba(139,92,246,.05)}
 .acc summary::-webkit-details-marker{display:none}
 .acc summary>svg{margin-left:auto;transition:transform .25s;color:var(--muted)}
 .acc[open] summary>svg{transform:rotate(180deg)}
-.acc-n{margin-left:auto;margin-right:.4rem;font-size:.75rem;color:var(--muted);
-  border:1px solid var(--border);border-radius:999px;padding:.1rem .55rem}
+/* badge bulat bernomor — angka saja (permintaan desain) */
+.n-dot{flex:none;margin-left:auto;margin-right:.4rem;min-width:1.75rem;height:1.75rem;
+  display:inline-grid;place-items:center;border-radius:50%;
+  background:var(--primary-soft);border:1px solid var(--primary);color:#d9d2ff;
+  font-weight:700;font-size:.82rem;font-variant-numeric:tabular-nums}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border-width:0}
+.inti-list{list-style:none;margin:0;padding:0;display:grid;gap:.55rem;counter-reset:inti}
+.inti-list li{display:flex;align-items:flex-start;gap:.75rem;background:var(--card);
+  border:1px solid var(--border);border-radius:var(--radius-sm);padding:.7rem .9rem;
+  font-size:.95rem;color:var(--fg)}
+.inti-list .n-dot{margin:0}
+.inti-list li:hover{border-color:var(--border2)}
 .acc[open] summary{border-bottom:1px solid var(--border);background:var(--bg2)}
 .acc-body{padding:.5rem 1rem 1rem}
 .rule-list{list-style:none;margin:0;padding:0}

@@ -187,6 +187,8 @@
       toc.classList.add("open");
       tab.setAttribute("aria-expanded", "true");
       panel.hidden = false;
+      var aktif = toc.querySelector(".toc-link.active");
+      if (aktif) aktif.scrollIntoView({ block: "nearest" });
       if (fokusPertama) {
         var first = toc.querySelector(".toc-link");
         if (first) first.focus();
@@ -266,7 +268,6 @@
   function siapMermaid() {
     if (!window.mermaid) return;
     var warna = {
-      dark: true,
       background: "#0f1220",
       primaryColor: "#8b5cf6",
       primaryTextColor: "#f2f2f7",
@@ -284,15 +285,18 @@
       clusterBorder: "#3a3f58",
       edgeLabelBackground: "#151829",
       titleColor: "#f2f2f7",
-      noteBkg: "#241a3f",
+      noteBkgColor: "#241a3f",
       noteTextColor: "#e9e4ff",
       noteBorderColor: "#8b5cf6",
+      rowOdd: "#131728",
+      rowEven: "#1b2036",
       fontSize: "14px"
     };
     try {
       window.mermaid.initialize({
         startOnLoad: false,
         theme: "base",
+        darkMode: true,
         securityLevel: "loose",
         fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif",
         flowchart: { curve: "basis", padding: 14, useMaxWidth: true },

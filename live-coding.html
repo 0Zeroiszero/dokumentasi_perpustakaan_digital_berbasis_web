@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Live Coding — Dokumentasi PustakaDigital</title>
-<meta name="description" content="8 snippet live coding asdos: registrasi, login, katalog, simpan status rak, auto-save progres, baca ulang, stream PDF, logout — lengkap dengan expected output.">
+<meta name="description" content="15 contoh live coding asdos: registrasi, login, katalog, status rak, progres, dashboard, guard admin, slug, unggah PDF, upsert, auto-finish, soft delete, reset, stream, logout — dengan expected output.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
@@ -23,12 +23,11 @@
   </div>
 </header>
 <main id="main" class="wrap">
-<nav class="crumbs" aria-label="Posisi"><a href="index.html">Beranda</a><span class="sep">/</span><span>Live Coding</span></nav><header class="page-head"><h1>Live Coding Asdos — HTML + PHP + sedikit JS (tanpa CSS)</h1><p class="lead">Delapan latihan yang bias muncul saat live coding, ditulis sesederhana mungkin agar fokus ke <b>pemahaman</b>: pola prepared statement, hash, upsert, lifecycle status, dan guard. Semua snippet sengaja <b>tanpa CSS</b>. Setiap kartu punya tab <b>Kode</b> dan <b>Expected Output</b> — output yang mungkin keluar di browser ditampilkan apa adanya di dalam frame. Jalankan lokal: impor dump, lalu <code>php -S localhost:8000</code> di folder snippet, login pakai akun demo.</p></header>
+<nav class="crumbs" aria-label="Posisi"><a href="index.html">Beranda</a><span class="sep">/</span><span>Live Coding</span></nav><header class="page-head"><h1>Live Coding Asdos — HTML + PHP + sedikit JS (tanpa CSS)</h1><p class="lead">15 contoh sederhana untuk latihan live coding — fokus pola: prepared statement, hash, upsert, lifecycle status, dan guard. Tiap kartu punya tab <b>Kode</b> dan <b>Expected Output</b>. Jalankan lokal: impor dump, lalu <code>php -S localhost:8000</code> di folder snippet.</p></header>
 <section class="card pad" id="pola-helper">
   <h2>Pola helper aplikasi asli</h2>
-  <p>Snippet di bawah menulis <code>mysqli</code> polos supaya terlihat. Aplikasi asli membungkusnya dalam
-  helper di <code>includes/db.php</code> dan <code>includes/auth_guard.php</code> — ini yang perlu kamu
-  sebut saat asdos menanyakan "di mana prepared statement-nya?":</p>
+  <p>Snippet menulis <code>mysqli</code> polos supaya terlihat. Aplikasi asli membungkusnya di
+  <code>includes/db.php</code> + <code>includes/auth_guard.php</code>:</p>
   <div class="table-wrap"><table><thead><tr><th>Helper</th><th>Fungsi</th></tr></thead><tbody><tr><td><code>q($sql, $params)</code></td><td>Prepare + bind (semua param jadi string 's') + execute; mengembalikan mysqli_stmt.</td></tr><tr><td><code>rows($sql, $params)</code></td><td>Semua hasil sebagai array asosiatif — dipakai daftar kartu/tabel.</td></tr><tr><td><code>row($sql, $params)</code></td><td>Satu baris pertama atau null — dipakai cek ada/tidak (email duplikat, buku aktif).</td></tr><tr><td><code>scalar($sql, $params)</code></td><td>Nilai tunggal (COUNT*) — dipakai statistik dashboard dan guard admin terakhir.</td></tr><tr><td><code>e($nilai)</code></td><td>htmlspecialchars ENT_QUOTES — semua output HTML wajib lewat ini.</td></tr><tr><td><code>akun()</code></td><td>Akun sesi dibaca ulang dari DB tiap request: perubahan role/is_active langsung berlaku.</td></tr><tr><td><code>wajib_login() / wajib_admin()</code></td><td>Guard halaman: tamu → login?next=, member → dashboard-user.</td></tr><tr><td><code>cek_csrf()</code></td><td>Token sesi vs POST dengan hash_equals; kosong/kedaluwarsa → HTTP 419.</td></tr><tr><td><code>flash($pesan)</code></td><td>Pesan sekali-tampil lewat redirect (pola PRG: Post-Redirect-Get).</td></tr></tbody></table></div>
 </section>
 
@@ -485,6 +484,266 @@ echo &#x27;Sesi diakhiri. Kembali ke beranda.&#x27;;
 // asli: header(&#x27;Location: &#x27; . url(&#x27;index.php&#x27;)); exit;</code></pre></div></div><div class="tab-p active" data-p="o0"><div class="term"><div class="term-bar"><i></i><i></i><i></i><span>logout.php — hasil render</span></div><div class="term-body"><p>Sesi diakhiri. Kembali ke beranda.</p></div></div><p class="muted small">Setelah ini, stream.php dan semua halaman wajib login kembali 403/redirect — meski tombol Back browser ditekan, Cache-Control: no-store membuat halaman lama tidak muncul dari cache.</p></div>
   </div>
 </section>
+<section class="snippet card pad" id="sn-dash">
+  <header class="sn-head">
+    <span class="badge">Snippet 9</span>
+    <h2>Statistik dashboard (turunan data)</h2>
+    <p class="muted">Menguji agregasi COUNT/CASE: angka dashboard dihitung saat render, bukan disimpan di tabel.</p>
+    <p class="map-note"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/></svg> BL-08 · Turunan Data (versi asli: dashboard-user.php + helper scalar())</p>
+  </header>
+  <div class="tabs" data-tabs>
+    <div class="tab-btns"><button class="chip tab-b active" data-tab="t0">Kode · dashboard-user.php</button><button class="chip tab-b active" data-tab="o0">Output</button></div>
+    <div class="tab-p active" data-p="t0"><div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><span class="code-fn">dashboard-user.php</span><pre><code class="language-php">&lt;?php
+// dashboard-user.php — statistik dihitung dari tabel saat render (tanpa kolom persen tersimpan).
+$koneksi = new mysqli(&#x27;127.0.0.1&#x27;, &#x27;root&#x27;, &#x27;&#x27;, &#x27;optl_pustaka&#x27;);
+session_start();
+$user_id = $_SESSION[&#x27;user_id&#x27;];
+
+// hitung koleksi per status dalam SATU query
+$q = $koneksi-&gt;prepare(
+    &#x27;SELECT status, COUNT(*) AS jumlah
+     FROM collections WHERE user_id = ?
+     GROUP BY status&#x27;
+);
+$q-&gt;bind_param(&#x27;i&#x27;, $user_id);
+$q-&gt;execute();
+$hasil = $q-&gt;get_result();
+?&gt;
+&lt;h2&gt;Rak Saya&lt;/h2&gt;
+&lt;table border=&quot;1&quot; cellpadding=&quot;6&quot;&gt;
+  &lt;tr&gt;&lt;th&gt;Status&lt;/th&gt;&lt;th&gt;Jumlah&lt;/th&gt;&lt;/tr&gt;
+  &lt;?php while ($r = $hasil-&gt;fetch_assoc()): ?&gt;
+    &lt;tr&gt;&lt;td&gt;&lt;?= htmlspecialchars($r[&#x27;status&#x27;]) ?&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;?= (int) $r[&#x27;jumlah&#x27;] ?&gt;&lt;/td&gt;&lt;/tr&gt;
+  &lt;?php endwhile; ?&gt;
+&lt;/table&gt;</code></pre></div></div><div class="tab-p active" data-p="o0"><div class="term"><div class="term-bar"><i></i><i></i><i></i><span>dashboard-user.php — hasil render</span></div><div class="term-body"><h2>Rak Saya</h2>
+<table>
+  <tr><th>Status</th><th>Jumlah</th></tr>
+  <tr><td>to_read</td><td>2</td></tr>
+  <tr><td>reading</td><td>3</td></tr>
+  <tr><td>finished</td><td>4</td></tr>
+</table></div></div><p class="muted small">Satu query GROUP BY menghasilkan semua angka dashboard. Ganti pilihan status di Rak Saya, angka berubah — tidak ada kolom jumlah yang disimpan.</p></div>
+  </div>
+</section>
+<section class="snippet card pad" id="sn-guard-admin">
+  <header class="sn-head">
+    <span class="badge">Snippet 10</span>
+    <h2>Guard halaman admin</h2>
+    <p class="muted">Menguji pemahaman guard: halaman admin ditutup untuk tamu dan member di awal file.</p>
+    <p class="map-note"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/></svg> BR-07.1 · BL-06 (versi asli: wajib_admin() di includes/auth_guard.php)</p>
+  </header>
+  <div class="tabs" data-tabs>
+    <div class="tab-btns"><button class="chip tab-b active" data-tab="t0">Kode · admin/dashboard.php</button><button class="chip tab-b active" data-tab="o0">Output</button></div>
+    <div class="tab-p active" data-p="t0"><div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><span class="code-fn">admin/dashboard.php</span><pre><code class="language-php">&lt;?php
+// admin/dashboard.php — guard di baris paling atas, sebelum HTML apa pun.
+session_start();
+
+// perbarui akun dari DB (role/is_active terbaru, bukan cuma isi sesi lama)
+$koneksi = new mysqli(&#x27;127.0.0.1&#x27;, &#x27;root&#x27;, &#x27;&#x27;, &#x27;optl_pustaka&#x27;);
+$q = $koneksi-&gt;prepare(&#x27;SELECT role, is_active FROM users WHERE user_id = ?&#x27;);
+$q-&gt;bind_param(&#x27;i&#x27;, $_SESSION[&#x27;user_id&#x27;] ?? 0);
+$q-&gt;execute();
+
+$akun = $q-&gt;get_result()-&gt;fetch_assoc();
+if (!$akun || $akun[&#x27;is_active&#x27;] != 1 || $akun[&#x27;role&#x27;] !== &#x27;admin&#x27;) {
+    http_response_code(403);
+    exit(&#x27;403 — halaman ini hanya untuk admin.&#x27;);
+}
+?&gt;
+&lt;h2&gt;Dashboard Admin&lt;/h2&gt;
+&lt;p&gt;Selamat datang, admin.&lt;/p&gt;</code></pre></div></div><div class="tab-p active" data-p="o0"><div class="term"><div class="term-bar"><i></i><i></i><i></i><span>admin/dashboard.php — hasil render</span></div><div class="term-body"><p>403 — halaman ini hanya untuk admin.</p></div></div><p class="muted small">Percobaan akses sebagai tamu/member berhenti di exit() sebelum satu baris HTML dicetak — guard bukan disembunyikan di CSS/JS.</p></div>
+  </div>
+</section>
+<section class="snippet card pad" id="sn-slug">
+  <header class="sn-head">
+    <span class="badge">Snippet 11</span>
+    <h2>Detail buku via slug + is_active</h2>
+    <p class="muted">Menguji pencarian by slug dan penolakan buku nonaktif (soft delete) di satu query.</p>
+    <p class="map-note"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/></svg> BR-06.4 · BR-06.3 · BL-02 (versi asli: detail.php + v_books_catalog)</p>
+  </header>
+  <div class="tabs" data-tabs>
+    <div class="tab-btns"><button class="chip tab-b active" data-tab="t0">Kode · detail.php</button><button class="chip tab-b active" data-tab="o0">Output</button></div>
+    <div class="tab-p active" data-p="t0"><div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><span class="code-fn">detail.php</span><pre><code class="language-php">&lt;?php
+// detail.php — slug = identitas publik URL; buku nonaktif = 404.
+$koneksi = new mysqli(&#x27;127.0.0.1&#x27;, &#x27;root&#x27;, &#x27;&#x27;, &#x27;optl_pustaka&#x27;);
+
+$slug = $_GET[&#x27;slug&#x27;] ?? &#x27;&#x27;;
+
+$q = $koneksi-&gt;prepare(
+    &#x27;SELECT title, author_name, description
+     FROM v_books_catalog
+     WHERE slug = ? AND is_active = 1&#x27;
+);
+$q-&gt;bind_param(&#x27;s&#x27;, $slug);
+$q-&gt;execute();
+$buku = $q-&gt;get_result()-&gt;fetch_assoc();
+
+if (!$buku) {
+    http_response_code(404);
+    exit(&#x27;Buku tidak ditemukan.&#x27;);
+}
+?&gt;
+&lt;h2&gt;&lt;?= htmlspecialchars($buku[&#x27;title&#x27;]) ?&gt;&lt;/h2&gt;
+&lt;p&gt;Penulis: &lt;?= htmlspecialchars($buku[&#x27;author_name&#x27;]) ?&gt;&lt;/p&gt;
+&lt;p&gt;&lt;?= htmlspecialchars($buku[&#x27;description&#x27;]) ?&gt;&lt;/p&gt;
+&lt;a href=&quot;read.php?slug=&lt;?= urlencode($slug) ?&gt;&quot;&gt;Baca sekarang&lt;/a&gt;</code></pre></div></div><div class="tab-p active" data-p="o0"><div class="term"><div class="term-bar"><i></i><i></i><i></i><span>detail.php — hasil render</span></div><div class="term-body"><h2>Matematika Diskrit</h2>
+<p>Penulis: Rinaldi Munir</p>
+<p>Edisi kelima, terbitan 2024.</p>
+<a href="read.php?slug=matematika-diskrit">Baca sekarang</a></div></div><p class="muted small">slug matematika-diskrit → halaman detail. Coba slug buku yang dinonaktifkan → 'Buku tidak ditemukan.' karena katalog sudah memfilter is_active = 1.</p></div>
+  </div>
+</section>
+<section class="snippet card pad" id="sn-upload">
+  <header class="sn-head">
+    <span class="badge">Snippet 12</span>
+    <h2>Unggah PDF: validasi berkas + checksum</h2>
+    <p class="muted">Menguji validasi ekstensi, MIME, ukuran maksimum, dan penyimpanan checksum SHA-256.</p>
+    <p class="map-note"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/></svg> BR-06.2 · SPEC-09 (versi asli: book-form.php — PDF ≤50 MB, checksum_sha256)</p>
+  </header>
+  <div class="tabs" data-tabs>
+    <div class="tab-btns"><button class="chip tab-b active" data-tab="t0">Kode · admin/book-upload.php</button><button class="chip tab-b active" data-tab="o0">Output</button></div>
+    <div class="tab-p active" data-p="t0"><div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><span class="code-fn">admin/book-upload.php</span><pre><code class="language-php">&lt;?php
+// admin/book-upload.php — validasi berkas SEBELUM apa pun disimpan.
+$f = $_FILES[&#x27;pdf&#x27;] ?? null;
+
+$ekstensi = strtolower(pathinfo($f[&#x27;name&#x27;] ?? &#x27;&#x27;, PATHINFO_EXTENSION));
+$finfo    = new finfo(FILEINFO_MIME_TYPE);
+$mime     = $finfo-&gt;file($f[&#x27;tmp_name&#x27;] ?? &#x27;&#x27;);
+$ukuran   = (int) ($f[&#x27;size&#x27;] ?? 0);
+
+if ($ekstensi !== &#x27;pdf&#x27;) {
+    exit(&#x27;Gagal: ekstensi bukan .pdf.&#x27;);
+}
+if ($mime !== &#x27;application/pdf&#x27;) {
+    exit(&#x27;Gagal: isi berkas bukan PDF asli (MIME &#x27; . $mime . &#x27;).&#x27;);
+}
+if ($ukuran &gt; 50 * 1024 * 1024) {
+    exit(&#x27;Gagal: ukuran melebihi 50 MB.&#x27;);
+}
+
+$namaBaru = bin2hex(random_bytes(16)) . &#x27;.pdf&#x27;;
+move_uploaded_file($f[&#x27;tmp_name&#x27;], &#x27;../storage/ebooks/&#x27; . $namaBaru);
+
+// checksum asli aplikasi: SHA-256 untuk verifikasi integritas
+$checksum = hash_file(&#x27;sha256&#x27;, &#x27;../storage/ebooks/&#x27; . $namaBaru);
+echo &#x27;Tersimpan sebagai storage/ebooks/&#x27; . $namaBaru;
+echo &#x27;&lt;br&gt;Checksum: &#x27; . substr($checksum, 0, 16) . &#x27;…&#x27;;
+echo &#x27;&lt;br&gt;Ukuran: &#x27; . round($ukuran / 1048576, 1) . &#x27; MB&#x27;;</code></pre></div></div><div class="tab-p active" data-p="o0"><div class="term"><div class="term-bar"><i></i><i></i><i></i><span>admin/book-upload.php — hasil render</span></div><div class="term-body"><p>Tersimpan sebagai storage/ebooks/3f8a1c22e0d94b7f….pdf</p>
+<p>Checksum: 9f2c41ab77e0d3c8…</p>
+<p>Ukuran: 1.8 MB</p></div></div><p class="muted small">PDF palsu (ekstensi .pdf tapi isi teks) ditolak di cek MIME. PDF asli disimpan dengan nama acak + checksum SHA-256 — bukan nama asli unggahan (menghindari path traversal).</p></div>
+  </div>
+</section>
+<section class="snippet card pad" id="sn-unique-rak">
+  <header class="sn-head">
+    <span class="badge">Snippet 13</span>
+    <h2>Simpan status rak tanpa duplikat (upsert)</h2>
+    <p class="muted">Menguji upsert: satu baris per (user, buku) dijaga UNIQUE KEY, bukan logika if-else PHP.</p>
+    <p class="map-note"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/></svg> BR-05.2 · BR-03.1 · BL-03 (versi asli: collection-save.php, UNIQUE collections)</p>
+  </header>
+  <div class="tabs" data-tabs>
+    <div class="tab-btns"><button class="chip tab-b active" data-tab="t0">Kode · collection-save.php</button><button class="chip tab-b active" data-tab="o0">Output</button></div>
+    <div class="tab-p active" data-p="t0"><div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><span class="code-fn">collection-save.php</span><pre><code class="language-php">&lt;?php
+// collection-save.php — upsert: INSERT kalau belum ada, UPDATE kalau sudah.
+$koneksi = new mysqli(&#x27;127.0.0.1&#x27;, &#x27;root&#x27;, &#x27;&#x27;, &#x27;optl_pustaka&#x27;);
+session_start();
+
+$valid = [&#x27;to_read&#x27;, &#x27;reading&#x27;, &#x27;finished&#x27;, &#x27;not_interested&#x27;];
+$status = $_POST[&#x27;status&#x27;] ?? &#x27;&#x27;;
+if (!in_array($status, $valid, true)) {
+    exit(&#x27;Status tidak valid.&#x27;);
+}
+
+// UNIQUE KEY (user_id, book_id) di tabel collections — DB yang menolak duplikat
+$q = $koneksi-&gt;prepare(
+    &#x27;INSERT INTO collections (user_id, book_id, status, source)
+     VALUES (?, ?, ?, &quot;user&quot;)
+     ON DUPLICATE KEY UPDATE status = VALUES(status), source = &quot;user&quot;&#x27;
+);
+$q-&gt;bind_param(&#x27;iis&#x27;, $_SESSION[&#x27;user_id&#x27;], $_POST[&#x27;book_id&#x27;], $status);
+$q-&gt;execute();
+
+echo &#x27;Status rak: &#x27; . $status;</code></pre></div></div><div class="tab-p active" data-p="o0"><div class="term"><div class="term-bar"><i></i><i></i><i></i><span>collection-save.php — hasil render</span></div><div class="term-body"><p>Status rak: reading</p></div></div><p class="muted small">Tekan tombol status yang sama 5× — tetap SATU baris untuk buku itu (UNIQUE key). Tanpa ON DUPLICATE KEY, percobaan kedua akan gagal karena duplicate entry.</p></div>
+  </div>
+</section>
+<section class="snippet card pad" id="sn-auto-finish">
+  <header class="sn-head">
+    <span class="badge">Snippet 14</span>
+    <h2>Auto-finished saat progres 100%</h2>
+    <p class="muted">Menguji lifecycle: sistem mengubah status system→finished di ambang 95%, tanpa klik user.</p>
+    <p class="map-note"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/></svg> BL-04 · BR-03.4 (versi asli: progress-save.php + kolom source system/user)</p>
+  </header>
+  <div class="tabs" data-tabs>
+    <div class="tab-btns"><button class="chip tab-b active" data-tab="t0">Kode · progress-save.php</button><button class="chip tab-b active" data-tab="o0">Output</button></div>
+    <div class="tab-p active" data-p="t0"><div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><span class="code-fn">progress-save.php</span><pre><code class="language-php">&lt;?php
+// progress-save.php — dipanggil iframe saat halaman baca ke-scroll/pindah.
+$koneksi = new mysqli(&#x27;127.0.0.1&#x27;, &#x27;root&#x27;, &#x27;&#x27;, &#x27;optl_pustaka&#x27;);
+session_start();
+
+$progress = min(100, max(0, (int) ($_POST[&#x27;progress&#x27;] ?? 0)));
+$book_id  = (int) ($_POST[&#x27;book_id&#x27;] ?? 0);
+
+// ambil status lama; sistem hanya boleh mengubah baris ber-source system
+$q = $koneksi-&gt;prepare(
+    &#x27;SELECT status, source FROM reading_progress
+     WHERE user_id = ? AND book_id = ?&#x27;
+);
+$q-&gt;bind_param(&#x27;ii&#x27;, $_SESSION[&#x27;user_id&#x27;], $book_id);
+$q-&gt;execute();
+$lama = $q-&gt;get_result()-&gt;fetch_assoc();
+
+// BR-03.5: pilihan user TIDAK diubah sistem
+if ($lama &amp;&amp; $lama[&#x27;source&#x27;] === &#x27;user&#x27;) {
+    $statusBaru = $lama[&#x27;status&#x27;];
+} elseif ($progress &gt;= 95) {
+    $statusBaru = &#x27;finished&#x27;;   // keputusan sistem, otomatis
+} else {
+    $statusBaru = &#x27;reading&#x27;;
+}
+
+$s = $koneksi-&gt;prepare(
+    &#x27;INSERT INTO reading_progress (user_id, book_id, progress, status, source)
+     VALUES (?, ?, ?, ?, &quot;system&quot;)
+     ON DUPLICATE KEY UPDATE progress = VALUES(progress),
+        status = VALUES(status), source = &quot;system&quot;&#x27;
+);
+$s-&gt;bind_param(&#x27;iiis&#x27;, $_SESSION[&#x27;user_id&#x27;], $book_id, $progress, $statusBaru);
+$s-&gt;execute();
+
+echo &#x27;Progres &#x27; . $progress . &#x27;% — status &#x27; . $statusBaru;</code></pre></div></div><div class="tab-p active" data-p="o0"><div class="term"><div class="term-bar"><i></i><i></i><i></i><span>progress-save.php — hasil render</span></div><div class="term-body"><p>Progres 97% — status finished</p></div></div><p class="muted small">Scroll melewati 95% → sistem sendiri menandai finished (source=system). Tapi begitu user memilih 'Baca Ulang' (source=user), auto-finish tidak menyentuh statusnya lagi — hanya progres yang diperbarui.</p></div>
+  </div>
+</section>
+<section class="snippet card pad" id="sn-soft-delete">
+  <header class="sn-head">
+    <span class="badge">Snippet 15</span>
+    <h2>Nonaktifkan buku (soft delete)</h2>
+    <p class="muted">Menguji soft delete: buku hilang dari katalog, tetapi koleksi & progres pengguna tidak tersentuh.</p>
+    <p class="map-note"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/></svg> BR-06.3 · BL-06 (versi asli: admin/books.php POST Aktif/Nonaktif + konfirmasi)</p>
+  </header>
+  <div class="tabs" data-tabs>
+    <div class="tab-btns"><button class="chip tab-b active" data-tab="t0">Kode · admin/book-status.php</button><button class="chip tab-b active" data-tab="o0">Output</button></div>
+    <div class="tab-p active" data-p="t0"><div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><span class="code-fn">admin/book-status.php</span><pre><code class="language-php">&lt;?php
+// admin/book-status.php — TIDAK ADA DELETE FROM books di seluruh aplikasi.
+$koneksi = new mysqli(&#x27;127.0.0.1&#x27;, &#x27;root&#x27;, &#x27;&#x27;, &#x27;optl_pustaka&#x27;);
+session_start();
+// …guard admin di sini (lihat Snippet 10)…
+
+$book_id = (int) ($_POST[&#x27;book_id&#x27;] ?? 0);
+
+// soft delete: tanda is_active=0, baris tetap ada
+$q = $koneksi-&gt;prepare(&#x27;UPDATE books SET is_active = 0 WHERE book_id = ?&#x27;);
+$q-&gt;bind_param(&#x27;i&#x27;, $book_id);
+$q-&gt;execute();
+
+// bukti: katalog tinggal yang aktif, rak tidak berubah
+$katalog = $koneksi-&gt;query(
+    &#x27;SELECT COUNT(*) AS jml FROM v_books_catalog WHERE is_active = 1&#x27;
+)-&gt;fetch_assoc();
+echo &#x27;Buku #&#x27; . $book_id . &#x27; dinonaktifkan.&#x27;;
+echo &#x27;&lt;br&gt;Katalog sekarang: &#x27; . $katalog[&#x27;jml&#x27;] . &#x27; buku aktif.&#x27;;
+echo &#x27;&lt;br&gt;Koleksi &amp; progres pengguna tetap utuh (FK RESTRICT).&#x27;;</code></pre></div></div><div class="tab-p active" data-p="o0"><div class="term"><div class="term-bar"><i></i><i></i><i></i><span>admin/book-status.php — hasil render</span></div><div class="term-body"><p>Buku #7 dinonaktifkan.</p>
+<p>Katalog sekarang: 10 buku aktif.</p>
+<p>Koleksi & progres pengguna tetap utuh (FK RESTRICT).</p></div></div><p class="muted small">Tombol 'Nonaktifkan' memanggil UPDATE, bukan DELETE — FK RESTRICT juga memblokir hapus saat rak/progres menunjuk buku. Aktifkan kembali = is_active=1.</p></div>
+  </div>
+</section>
 </main>
 <footer class="foot">
   <div class="wrap foot-in">
@@ -505,7 +764,7 @@ echo &#x27;Sesi diakhiri. Kembali ke beranda.&#x27;;
       <span>Di halaman ini</span>
       <button class="icon-btn toc-close" aria-label="Tutup daftar isi"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     </div>
-    <div class="toc-list"><a class="toc-link" href="#pola-helper" data-toc-link data-target="pola-helper">Pola helper aplikasi asli</a><a class="toc-link" href="#sn-registrasi" data-toc-link data-target="sn-registrasi">Snippet 1 · Registrasi akun member</a><a class="toc-link" href="#sn-login" data-toc-link data-target="sn-login">Snippet 2 · Login dengan password_verify + is_active</a><a class="toc-link" href="#sn-katalog" data-toc-link data-target="sn-katalog">Snippet 3 · Ambil data katalog (pencarian server-side)</a><a class="toc-link" href="#sn-rak" data-toc-link data-target="sn-rak">Snippet 4 · Simpan status Rak Saya (dropdown + upsert)</a><a class="toc-link" href="#sn-progres" data-toc-link data-target="sn-progres">Snippet 5 · Auto-save progres baca (iframe, bukan AJAX)</a><a class="toc-link" href="#sn-reset" data-toc-link data-target="sn-reset">Snippet 6 · Baca Ulang — reset progres</a><a class="toc-link" href="#sn-stream" data-toc-link data-target="sn-stream">Snippet 7 · Streaming PDF aman (guard sesi + path)</a><a class="toc-link" href="#sn-logout" data-toc-link data-target="sn-logout">Snippet 8 · Logout yang benar</a></div>
+    <div class="toc-list"><a class="toc-link" href="#pola-helper" data-toc-link data-target="pola-helper">Pola helper aplikasi asli</a><a class="toc-link" href="#sn-registrasi" data-toc-link data-target="sn-registrasi">Snippet 1 · Registrasi akun member</a><a class="toc-link" href="#sn-login" data-toc-link data-target="sn-login">Snippet 2 · Login dengan password_verify + is_active</a><a class="toc-link" href="#sn-katalog" data-toc-link data-target="sn-katalog">Snippet 3 · Ambil data katalog (pencarian server-side)</a><a class="toc-link" href="#sn-rak" data-toc-link data-target="sn-rak">Snippet 4 · Simpan status Rak Saya (dropdown + upsert)</a><a class="toc-link" href="#sn-progres" data-toc-link data-target="sn-progres">Snippet 5 · Auto-save progres baca (iframe, bukan AJAX)</a><a class="toc-link" href="#sn-reset" data-toc-link data-target="sn-reset">Snippet 6 · Baca Ulang — reset progres</a><a class="toc-link" href="#sn-stream" data-toc-link data-target="sn-stream">Snippet 7 · Streaming PDF aman (guard sesi + path)</a><a class="toc-link" href="#sn-logout" data-toc-link data-target="sn-logout">Snippet 8 · Logout yang benar</a><a class="toc-link" href="#sn-dash" data-toc-link data-target="sn-dash">Snippet 9 · Statistik dashboard (turunan data)</a><a class="toc-link" href="#sn-guard-admin" data-toc-link data-target="sn-guard-admin">Snippet 10 · Guard halaman admin</a><a class="toc-link" href="#sn-slug" data-toc-link data-target="sn-slug">Snippet 11 · Detail buku via slug + is_active</a><a class="toc-link" href="#sn-upload" data-toc-link data-target="sn-upload">Snippet 12 · Unggah PDF: validasi berkas + checksum</a><a class="toc-link" href="#sn-unique-rak" data-toc-link data-target="sn-unique-rak">Snippet 13 · Simpan status rak tanpa duplikat (upsert)</a><a class="toc-link" href="#sn-auto-finish" data-toc-link data-target="sn-auto-finish">Snippet 14 · Auto-finished saat progres 100%</a><a class="toc-link" href="#sn-soft-delete" data-toc-link data-target="sn-soft-delete">Snippet 15 · Nonaktifkan buku (soft delete)</a></div>
   </nav>
 </div>
 <script src="assets/vendor/mermaid.min.js"></script>
