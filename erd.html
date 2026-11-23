@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ERD — Dokumentasi PustakaDigital</title>
+<meta name="description" content="ERD interaktif database optl_pustaka: 7 tabel 3NF + VIEW v_books_catalog, gambar ERD asli, penjelasan tabel dan data seed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Lewati ke konten</a>
+<header class="topbar">
+  <div class="wrap bar">
+    <a class="brand" href="index.html">
+      <span class="brand-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5zM20 18H6.5A2.5 2.5 0 0 0 4 20.5"/></svg></span>
+      <span class="brand-tx">Dokumentasi <b>PustakaDigital</b></span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Navigasi utama"><a href="index.html">Beranda</a><a href="alur-bisnis.html">Alur Bisnis</a><a href="business-rules.html">Business Rules</a><a href="erd.html" aria-current="page">ERD</a><a href="sql.html">Query SQL</a><a href="live-coding.html">Live Coding</a><a href="screenshots.html">Screenshot</a><a href="tentang.html">Tentang</a><a href="spesifikasi.html">Spesifikasi</a></nav>
+    <button class="icon-btn nav-btn" id="navBtn" aria-expanded="false" aria-controls="nav" aria-label="Buka menu"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Posisi"><a href="index.html">Beranda</a><span class="sep">/</span><span>ERD</span></nav><header class="page-head"><h1>ERD & Skema Database optl_pustaka</h1><p class="lead">Tujuh tabel 3NF plus satu VIEW. Diagram relasi di bawah interaktif (zoom, geser, layar penuh), dan dua gambar ERD asli dari repo — <i>ERD Logical</i> dan <i>ERD Relasional</i> — ditampilkan untuk pembanding.</p></header>
+<section class="sec">
+  <div class="cols-2">
+    <div class="card pad">
+      <h3>Aturan relasi penting</h3>
+      <ul class="plain">
+        <li><code>collections</code> dan <code>reading_progress</code> unik per <b>(user_id, book_id)</b> — dijaga UNIQUE KEY di database, bukan hanya logika PHP.</li>
+        <li>Semua FK RESTRICT: buku tidak bisa dibuang begitu ada rak/progres yang menunjuknya.</li>
+        <li><code>books.is_active</code> adalah soft-delete; koleksi &amp; progres pengguna tetap utuh.</li>
+        <li>Halaman publik membaca <code>v_books_catalog</code> sehingga 0 JOIN di PHP.</li>
+      </ul>
+    </div>
+    <div class="card pad">
+      <h3>Data seed demo</h3>
+      <div class="stats"><div class="stat stat-sm"><b>11</b><small>tabel <code>users</code></small></div><div class="stat stat-sm"><b>11</b><small>tabel <code>authors</code></small></div><div class="stat stat-sm"><b>6</b><small>tabel <code>publishers</code></small></div><div class="stat stat-sm"><b>10</b><small>tabel <code>genres</code></small></div><div class="stat stat-sm"><b>11</b><small>tabel <code>books</code></small></div><div class="stat stat-sm"><b>14</b><small>tabel <code>collections</code></small></div><div class="stat stat-sm"><b>11</b><small>tabel <code>reading_progress</code></small></div></div>
+      <p class="muted">Sumber: <code>database/for_demo_optl_pustaka.sql</code> (dump phpMyAdmin 23 Nov 2026,
+      MySQL 9.6). Termasuk akun demo, 11 buku dengan berkas &amp; checksum asli, dan contoh baris
+      ber-source <code>system</code> maupun <code>user</code>.</p>
+    </div>
+  </div>
+</section>
+<section class="sec">
+  <h2>Diagram Relasi (mermaid)</h2>
+  <figure class="diag"><div class="diag-tools"><button class="chip d-zoom" data-step="1" aria-label="Perbesar"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5M11 8.5v5"/></svg></button><button class="chip d-zoom" data-step="-1" aria-label="Perkecil"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5"/></svg></button><button class="chip d-reset" aria-label="Reset tampilan"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 6M4 10V5m0 5h5"/></svg></button><button class="chip d-full" aria-label="Layar penuh"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div><div class="diag-scroll" style="max-height:70vh"><div class="diag-inner"><pre class="mermaid">erDiagram
+    USERS ||--o{ COLLECTIONS : &quot;menyimpan&quot;
+    BOOKS ||--o{ COLLECTIONS : &quot;difikatkan&quot;
+    USERS ||--o{ READING_PROGRESS : &quot;mencatat&quot;
+    BOOKS ||--o{ READING_PROGRESS : &quot;dibaca&quot;
+    AUTHORS ||--o{ BOOKS : &quot;menulis&quot;
+    PUBLISHERS ||--o{ BOOKS : &quot;menerbitkan&quot;
+    GENRES ||--o{ BOOKS : &quot;dikategorikan&quot;
+
+    USERS {
+        int user_id PK
+        varchar email UK &quot;unik, login&quot;
+        varchar password_hash &quot;Bcrypt&quot;
+        varchar display_name
+        enum role &quot;admin|member&quot;
+        tinyint is_active &quot;1 aktif, 0 nonaktif&quot;
+        timestamp created_at
+    }
+    BOOKS {
+        int book_id PK
+        int author_id FK
+        int publisher_id FK
+        int genre_id FK
+        varchar title
+        varchar slug UK &quot;identitas publik&quot;
+        text description
+        smallint published_year
+        varchar isbn UK
+        varchar storage_path UK &quot;storage/ebooks/{id}.pdf&quot;
+        int file_size
+        char checksum_sha256
+        int page_count
+        varchar cover_path
+        tinyint is_active &quot;soft-delete&quot;
+        timestamp created_at
+    }
+    COLLECTIONS {
+        int collection_id PK
+        int user_id FK
+        int book_id FK
+        enum status &quot;to_read|reading|finished|not_interested&quot;
+        enum status_source &quot;system|user&quot;
+        timestamp created_at
+    }
+    READING_PROGRESS {
+        int progress_id PK
+        int user_id FK
+        int book_id FK
+        int last_page &quot;clamp 1..page_count&quot;
+        timestamp updated_at
+    }
+    AUTHORS {
+        int author_id PK
+        varchar name
+        varchar slug UK
+        varchar country
+        text bio
+        timestamp created_at
+    }
+    PUBLISHERS {
+        int publisher_id PK
+        varchar name
+        varchar slug UK
+        varchar city
+        timestamp created_at
+    }
+    GENRES {
+        int genre_id PK
+        varchar name UK
+        text description
+    }</pre></div></div><figcaption class="muted">ERD mermaid — klik, zoom, atau buka layar penuh untuk membaca atribut.</figcaption></figure>
+</section>
+<section class="sec">
+  <h2>ERD Asli dari Repo</h2>
+  <div class="cols-2">
+    <figure class="shot-card"><img loading="lazy" src="assets/img/erd-logical.jpg" alt="ERD Logical dari repo"><figcaption>ERD Logical.jpg (gambar asli repo)</figcaption></figure>
+    <figure class="shot-card"><img loading="lazy" src="assets/img/erd-relasional.jpg" alt="ERD Relasional dari repo"><figcaption>ERD Relasional.jpg (gambar asli repo)</figcaption></figure>
+  </div>
+</section>
+<section class="sec">
+  <h2>Penjelasan Tiap Tabel</h2>
+  <div class="grid-2"><div class="card pad tbl-card"><h3><code>users</code></h3><p class="tag">Akun aplikasi</p><p>Email unik sebagai identitas login, password_hash Bcrypt ($2y$12), role admin/member, dan is_active untuk penonaktifan (soft-delete). Akun demo: admin@pustaka.com dan andi@email.com.</p></div><div class="card pad tbl-card"><h3><code>publishers</code></h3><p class="tag">Master penerbit</p><p>Nama + slug unik + kota. Tidak bisa dihapus (BR-06.5); datalist kota berasal dari includes/data_helper.php.</p></div><div class="card pad tbl-card"><h3><code>genres</code></h3><p class="tag">Master kategori</p><p>Sepuluh genre seed (Teknologi, Novel, Sains, …). name unik dan menjadi basis filter katalog.</p></div><div class="card pad tbl-card"><h3><code>authors</code></h3><p class="tag">Master penulis</p><p>Nama + slug unik + negara + bio. Profil publik author.php?slug=… membaca tabel ini.</p></div><div class="card pad tbl-card"><h3><code>books</code></h3><p class="tag">Katalog buku</p><p>Inti sistem: FK ke author/publisher/genre, slug & ISBN unik, storage_path {book_id}.pdf, checksum SHA-256, page_count, cover_path, is_active sebagai soft-delete.</p></div><div class="card pad tbl-card"><h3><code>collections</code></h3><p class="tag">Rak Saya</p><p>Satu baris per (user_id, book_id) — UNIQUE uq_collections_user_book. Empat status enum + status_source system/user yang mengatur lifecycle BR-03.</p></div><div class="card pad tbl-card"><h3><code>reading_progress</code></h3><p class="tag">Progres baca</p><p>Hanya last_page per (user_id, book_id) — UNIQUE uq_progress_user_book. Persentase tidak pernah disimpan (BR-04.1).</p></div><div class="card pad tbl-card"><h3><code>v_books_catalog</code></h3><p class="tag">VIEW katalog</p><p>Gabungan books+authors+genres+publishers. Semua halaman publik cukup SELECT * — 0 JOIN di PHP (BR-05.2).</p></div></div>
+</section>
+</main>
+<footer class="foot">
+  <div class="wrap foot-in">
+    <p><b>Dokumentasi PustakaDigital</b> — Perpustakaan Digital Baca Online. Situs dokumentasi bisnis (alur, aturan, basis data, live coding), bukan kode aplikasi.</p>
+    <p>Repo aplikasi: <code>0Zeroiszero/Perpustakaan-berbasis-web</code> · Repo dokumentasi: <code>0Zeroiszero/dokumentasi_perpustakaan_digital_berbasis_web</code> · Branch aplikasi <code>optl/rombak-total</code> · Database <code>optl_pustaka</code></p>
+  </div>
+</footer>
+<button class="to-top" id="toTop" aria-label="Kembali ke atas"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7M12 5v14"/></svg></button>
+<script src="assets/vendor/mermaid.min.js"></script>
+<script src="assets/vendor/highlight.min.js"></script>
+<script src="assets/app.js"></script>
+
+</body>
+</html>

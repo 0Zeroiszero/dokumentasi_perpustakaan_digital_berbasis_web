@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beranda — Dokumentasi PustakaDigital</title>
+<meta name="description" content="Dokumentasi bisnis PustakaDigital: alur bisnis animasi, business rules, ERD, query SQL, live coding asdos, dan screenshot.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Lewati ke konten</a>
+<header class="topbar">
+  <div class="wrap bar">
+    <a class="brand" href="index.html">
+      <span class="brand-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5zM20 18H6.5A2.5 2.5 0 0 0 4 20.5"/></svg></span>
+      <span class="brand-tx">Dokumentasi <b>PustakaDigital</b></span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Navigasi utama"><a href="index.html" aria-current="page">Beranda</a><a href="alur-bisnis.html">Alur Bisnis</a><a href="business-rules.html">Business Rules</a><a href="erd.html">ERD</a><a href="sql.html">Query SQL</a><a href="live-coding.html">Live Coding</a><a href="screenshots.html">Screenshot</a><a href="tentang.html">Tentang</a><a href="spesifikasi.html">Spesifikasi</a></nav>
+    <button class="icon-btn nav-btn" id="navBtn" aria-expanded="false" aria-controls="nav" aria-label="Buka menu"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+</header>
+<main id="main" class="wrap">
+
+<section class="hero">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <span class="badge-soft">Dokumentasi Proyek · branch <code>optl/rombak-total</code></span>
+  <h1>PustakaDigital<span class="dot">.</span></h1>
+  <p class="lead">Perpustakaan digital baca online berbasis web — katalog e-book PDF, rak pribadi
+  dengan progres baca otomatis, dan dashboard user–admin. Situs ini mendokumentasikan
+  <b>sisi bisnis</b> proyek: alur kerja, aturan, basis data, dan latihan live coding untuk asdos —
+  bukan listing kode per berkas.</p>
+  <div class="hero-cta">
+    <a class="btn btn-primary" href="alur-bisnis.html"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg> Mulai dari Alur Bisnis</a>
+    <a class="btn btn-outline" href="erd.html"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c4.4 0 8 1.3 8 3s-3.6 3-8 3-8-1.3-8-3 3.6-3 8-3zM4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg> Lihat ERD</a>
+  </div>
+  <div class="stats"><div class="stat"><b>7</b><small>tabel + 1 VIEW</small></div><div class="stat"><b>8</b><small>business rules</small></div><div class="stat"><b>9</b><small>alur business logic</small></div><div class="stat"><b>11</b><small>SPEC ticket</small></div><div class="stat"><b>33</b><small>screenshot</small></div><div class="stat"><b>2</b><small>akun demo</small></div></div>
+</section>
+
+<section class="sec">
+  <h2>Menu Dokumentasi</h2>
+  <p class="lead">Pilih satu kotak untuk membuka bagian dokumentasi. Semua halaman ringan, tanpa build step, dan siap dihubungkan ke Vercel.</p>
+  <div class="menu-grid"><a class="menu-card" href="alur-bisnis.html"><span class="mc-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h6v6H4zM14 14h6v6h-6zM7 10v4a2 2 0 0 0 2 2h5M17 14v-4a2 2 0 0 0-2-2h-5"/></svg></span><span class="mc-tx"><b>Alur Bisnis Animasi</b><small>9 alur business logic (BL-01–BL-09) sebagai animasi langkah demi langkah plus diagram mermaid interaktif.</small></span><span class="mc-badge">9 alur</span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a><a class="menu-card" href="business-rules.html"><span class="mc-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/></svg></span><span class="mc-tx"><b>Business Rules</b><small>BR-01–BR-08: aturan bisnis yang benar-benar dipegang server, lengkap dengan matriks akses dan lifecycle status.</small></span><span class="mc-badge">8 kelompok</span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a><a class="menu-card" href="erd.html"><span class="mc-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c4.4 0 8 1.3 8 3s-3.6 3-8 3-8-1.3-8-3 3.6-3 8-3zM4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span><span class="mc-tx"><b>ERD & Skema Database</b><small>7 tabel 3NF + VIEW v_books_catalog: diagram relasi interaktif, gambar ERD asli, dan penjelasan tiap tabel.</small></span><span class="mc-badge">7 + 1</span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a><a class="menu-card" href="sql.html"><span class="mc-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v14H4zM7.5 9.5l3 3-3 3M12.5 15.5H17"/></svg></span><span class="mc-tx"><b>Query SQL Asli</b><small>Query yang benar-benar dipakai aplikasi: VIEW, pencarian katalog, upsert rak, auto-save progres, guard admin.</small></span><span class="mc-badge">10 query</span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a><a class="menu-card" href="live-coding.html"><span class="mc-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14"/></svg></span><span class="mc-tx"><b>Live Coding Asdos</b><small>8 snippet sederhana HTML+PHP+JS tanpa CSS — registrasi, login, katalog, rak, progres, reset, stream, logout — dengan expected output.</small></span><span class="mc-badge">8 snippet</span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a><a class="menu-card" href="screenshots.html"><span class="mc-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v14H4zM4 15.5 8.5 11l4 4 2.5-2.5L19 16M9.5 8.8a.8.8 0 1 1-1.6 0 .8.8 0 0 1 1.6 0z"/></svg></span><span class="mc-tx"><b>Galeri Screenshot</b><small>33 tangkapan layar asli dari docs/screenshots: versi tamu, user, dan admin untuk setiap halaman.</small></span><span class="mc-badge">33 foto</span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a><a class="menu-card" href="tentang.html"><span class="mc-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5zM20 18H6.5A2.5 2.5 0 0 0 4 20.5"/></svg></span><span class="mc-tx"><b>Tentang & Fitur</b><small>Latar belakang, tujuan, 9 fitur utama, teknologi, dan struktur folder proyek.</small></span><span class="mc-badge">9 fitur</span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a><a class="menu-card" href="spesifikasi.html"><span class="mc-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h6v3H9zM7 6H5v15h14V6h-2M9 11h6M9 15h6"/></svg></span><span class="mc-tx"><b>Spesifikasi & Pengujian</b><small>11 ticket SPEC (SPEC-DB … SPEC-10) dan cara menjalankan smoke.php + viewport.py.</small></span><span class="mc-badge">11 spec</span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div>
+</section>
+
+<section class="sec">
+  <h2>Ringkas Proyek</h2>
+  <div class="cols-2">
+    <div class="card pad">
+      <h3>Kenapa proyek ini dibuat</h3>
+      <ul class="plain"><li>Perkembangan teknologi mendorong layanan perpustakaan beralih ke bentuk digital.</li><li>Perpustakaan konvensional terbatas oleh jam buka, lokasi, dan jumlah salinan buku cetak, sehingga koleksi tidak selalu bisa diakses kapan saja.</li><li>Proses peminjaman dan pengembalian buku fisik menambah langkah manual bagi pengguna maupun pengelola.</li></ul>
+      <p>Poin selengkapnya ada di halaman <a href="tentang.html">Tentang &amp; Fitur</a>, bersama tujuan
+      proyek, struktur folder, dan keputusan teknis yang mengikat (RENCANA-ROMBAK-TOTAL).</p>
+    </div>
+    <div class="card pad">
+      <h3>Cara menguji aplikasi</h3>
+      <p>Jalankan di Laragon/XAMPP, impor <code>database/for_demo_optl_pustaka.sql</code>, lalu buka
+      <code>/Perpustakaan-berbasis-web/public/</code>. Dua akun demo sudah tertanam di halaman login:</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Peran</th><th>Email</th><th>Password</th></tr></thead>
+        <tbody>
+          <tr><td>Admin</td><td><code>admin@pustaka.com</code></td><td><code>admin123</code></td></tr>
+          <tr><td>User</td><td><code>andi@email.com</code></td><td><code>andi123</code></td></tr>
+        </tbody>
+      </table></div>
+      <p>Uji otomatis: <code>tests/smoke.php</code> (semua rule) dan <code>tests/viewport.py</code> (tampilan 320–1366px).</p>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="foot">
+  <div class="wrap foot-in">
+    <p><b>Dokumentasi PustakaDigital</b> — Perpustakaan Digital Baca Online. Situs dokumentasi bisnis (alur, aturan, basis data, live coding), bukan kode aplikasi.</p>
+    <p>Repo aplikasi: <code>0Zeroiszero/Perpustakaan-berbasis-web</code> · Repo dokumentasi: <code>0Zeroiszero/dokumentasi_perpustakaan_digital_berbasis_web</code> · Branch aplikasi <code>optl/rombak-total</code> · Database <code>optl_pustaka</code></p>
+  </div>
+</footer>
+<button class="to-top" id="toTop" aria-label="Kembali ke atas"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7M12 5v14"/></svg></button>
+<script src="assets/vendor/mermaid.min.js"></script>
+<script src="assets/vendor/highlight.min.js"></script>
+<script src="assets/app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Query SQL — Dokumentasi PustakaDigital</title>
+<meta name="description" content="Query SQL asli PustakaDigital: VIEW katalog, pencarian, upsert rak, auto-save progres, baca ulang, guard admin, slug, dan DDL inti.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Lewati ke konten</a>
+<header class="topbar">
+  <div class="wrap bar">
+    <a class="brand" href="index.html">
+      <span class="brand-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5zM20 18H6.5A2.5 2.5 0 0 0 4 20.5"/></svg></span>
+      <span class="brand-tx">Dokumentasi <b>PustakaDigital</b></span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Navigasi utama"><a href="index.html">Beranda</a><a href="alur-bisnis.html">Alur Bisnis</a><a href="business-rules.html">Business Rules</a><a href="erd.html">ERD</a><a href="sql.html" aria-current="page">Query SQL</a><a href="live-coding.html">Live Coding</a><a href="screenshots.html">Screenshot</a><a href="tentang.html">Tentang</a><a href="spesifikasi.html">Spesifikasi</a></nav>
+    <button class="icon-btn nav-btn" id="navBtn" aria-expanded="false" aria-controls="nav" aria-label="Buka menu"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Posisi"><a href="index.html">Beranda</a><span class="sep">/</span><span>Query SQL</span></nav><header class="page-head"><h1>Query SQL yang Dipakai Aplikasi</h1><p class="lead">Seluruh query di halaman ini disalin langsung dari kode aplikasi dan dump <code>for_demo_optl_pustaka.sql</code> — bukan rekaan. Semuanya lewat prepared statement, sesuai BR-02.4. Impor dump lewat phpMyAdmin atau <code>mysql -uroot &lt; database/for_demo_optl_pustaka.sql</code>.</p></header>
+<section class="card pad">
+  <h2>Database demo: <code>optl_pustaka</code></h2>
+  <p>Dump <code>for_demo_optl_pustaka.sql</code> berisi struktur + data demo yang benar-benar dipakai
+  saat demo: 11 akun (termasuk admin &amp; user demo), 11 penulis, 6 penerbit, 10 genre, 11 buku lengkap
+  dengan berkas dan checksum SHA-256, 14 baris rak, dan 11 baris progres. File dump ikut disertakan di
+  folder <code>database/</code> repo dokumentasi ini.</p>
+  <p class="muted">Koneksi default di <code>includes/config.php</code>: host 127.0.0.1, user root tanpa
+  password (Laragon). Nama file dump persis seperti yang dipakai kelompok: <code>for_demo_optl_pustaka.sql</code>.</p>
+</section>
+
+<section class="card pad sql-card" id="sql-view">
+  <header class="sql-head"><h2>VIEW v_books_catalog — jantung katalog</h2><span class="badge-soft">database/for_demo_optl_pustaka.sql (definisi VIEW, dirapikan)</span></header>
+  <p>Semua halaman publik cukup SELECT * ke VIEW ini sehingga tidak ada JOIN di PHP (BR-05.2). Definisi asli di dump berbentuk satu baris; berikut versi yang dirapikan.</p>
+  <div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><pre><code class="language-sql">CREATE OR REPLACE VIEW v_books_catalog AS
+SELECT b.book_id, b.title, b.slug, b.description, b.published_year, b.isbn,
+       b.storage_path, b.file_size, b.checksum_sha256, b.page_count,
+       b.cover_path, b.is_active, b.created_at,
+       a.name AS author_name, a.slug AS author_slug, a.country AS author_country, a.bio AS author_bio,
+       g.genre_id, g.name AS genre_name,
+       p.name AS publisher_name, p.slug AS publisher_slug, p.city AS publisher_city
+FROM books  b
+JOIN authors    a ON a.author_id    = b.author_id
+JOIN genres     g ON g.genre_id     = b.genre_id
+JOIN publishers p ON p.publisher_id = b.publisher_id;</code></pre></div>
+</section>
+<section class="card pad sql-card" id="sql-katalog">
+  <header class="sql-head"><h2>Pencarian katalog (public/catalog.php)</h2><span class="badge-soft">public/catalog.php baris 9–20</span></header>
+  <p>Pencarian judul/penulis, filter genre, dan urutan diproses server-side dengan prepared statement — nilai user tidak pernah masuk string SQL (BR-05.1, BR-02.4).</p>
+  <div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><pre><code class="language-sql">SELECT * FROM v_books_catalog WHERE is_active = 1
+  AND (title LIKE ? OR author_name LIKE ?)   -- hanya bila ?q= diisi
+  AND genre_name = ?                          -- hanya bila ?kategori= diisi
+ORDER BY title ASC;                           -- atau book_id DESC (sort=terbaru)
+
+-- daftar pil genre untuk modal/filter
+SELECT name FROM genres ORDER BY name;</code></pre></div>
+</section>
+<section class="card pad sql-card" id="sql-rak">
+  <header class="sql-head"><h2>Rak Saya: JOIN + filter milik sesi (public/my-shelf.php)</h2><span class="badge-soft">public/my-shelf.php baris 20–40</span></header>
+  <p>Query rak selalu dibatasi c.user_id = ? (id sesi), digabung VIEW katalog dan LEFT JOIN progres. Filter kategori multi-nilai memakai placeholder dinamis, tetap prepared.</p>
+  <div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><pre><code class="language-sql">SELECT c.status, c.created_at, v.*, rp.last_page
+FROM collections c
+JOIN v_books_catalog v ON v.book_id = c.book_id
+LEFT JOIN reading_progress rp ON rp.user_id = c.user_id AND rp.book_id = c.book_id
+WHERE c.user_id = ?                          -- id dari sesi, bukan input
+  AND c.status = ?                           -- hanya bila tab status aktif
+  AND (v.title LIKE ? OR v.author_name LIKE ?)
+  AND v.genre_name IN (?, ?, ?)              -- placeholder = jumlah kategori terpilih
+ORDER BY c.created_at DESC, v.book_id DESC;</code></pre></div>
+</section>
+<section class="card pad sql-card" id="sql-dashboard">
+  <header class="sql-head"><h2>Statistik dashboard (user & admin)</h2><span class="badge-soft">public/dashboard-user.php, public/dashboard-admin.php</span></header>
+  <p>Semua indikator dihitung langsung dari tabel — tanpa data dummy (Turunan Data & Indikator). Persentase tidak disimpan; ia diturunkan saat render oleh persen_baca().</p>
+  <div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><pre><code class="language-sql">-- Dashboard user
+SELECT COUNT(*) FROM collections WHERE user_id = ?;
+SELECT COUNT(*) FROM collections WHERE user_id = ? AND status = &#x27;reading&#x27;;
+SELECT COUNT(*) FROM collections WHERE user_id = ? AND status = &#x27;finished&#x27;;
+SELECT COUNT(*) FROM books WHERE is_active = 1;
+
+-- Dashboard admin
+SELECT COUNT(*) FROM books;                 -- total (termasuk nonaktif)
+SELECT COUNT(*) FROM books WHERE is_active = 1;
+SELECT COUNT(*) FROM users;
+SELECT COUNT(*) FROM publishers;
+SELECT COUNT(*) FROM authors;
+SELECT * FROM v_books_catalog ORDER BY book_id DESC LIMIT 5;</code></pre></div>
+</section>
+<section class="card pad sql-card" id="sql-upsert">
+  <header class="sql-head"><h2>Upsert status rak (actions/collection-save.php)</h2><span class="badge-soft">public/actions/collection-save.php baris 17–21</span></header>
+  <p>Satu baris per (user, buku) dijaga UNIQUE KEY uq_collections_user_book, sehingga simpan/ubah status cukup satu statement INSERT … ON DUPLICATE KEY UPDATE. status_source selalu 'user' untuk aksi dropdown.</p>
+  <div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><pre><code class="language-sql">INSERT INTO collections (user_id, book_id, status, status_source)
+VALUES (?, ?, ?, &#x27;user&#x27;) AS baru
+ON DUPLICATE KEY UPDATE status = baru.status, status_source = &#x27;user&#x27;;
+
+-- validasi pendahulu: buku harus aktif
+SELECT book_id FROM books WHERE book_id = ? AND is_active = 1;</code></pre></div>
+</section>
+<section class="card pad sql-card" id="sql-progress">
+  <header class="sql-head"><h2>Progres baca & lifecycle otomatis (actions/progress-save.php)</h2><span class="badge-soft">public/actions/progress-save.php baris 15–54</span></header>
+  <p>Auto-save reader: clamp 1..page_count, buat baris system bila belum ada, auto-finished hanya untuk baris ber-source system, lalu upsert last_page.</p>
+  <div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><pre><code class="language-sql">-- batas halaman
+SELECT page_count FROM books WHERE book_id = ? AND is_active = 1;
+
+-- baca status saat ini
+SELECT status, status_source FROM collections WHERE user_id = ? AND book_id = ?;
+
+-- buat baris pertama saat belum ada (Baca Buku pertama = Sedang dibaca)
+INSERT INTO collections (user_id, book_id, status, status_source)
+VALUES (?, ?, &#x27;reading&#x27;, &#x27;system&#x27;);
+
+-- auto-selesai HANYA untuk baris milik sistem (BR-03.4)
+UPDATE collections SET status = &#x27;finished&#x27;
+WHERE user_id = ? AND book_id = ? AND status_source = &#x27;system&#x27;;
+
+-- simpan halaman terakhir (upsert, BR-04.1)
+INSERT INTO reading_progress (user_id, book_id, last_page)
+VALUES (?, ?, ?) AS baru
+ON DUPLICATE KEY UPDATE last_page = baru.last_page;</code></pre></div>
+</section>
+<section class="card pad sql-card" id="sql-reset">
+  <header class="sql-head"><h2>Baca Ulang (actions/progress-reset.php)</h2><span class="badge-soft">public/actions/progress-reset.php baris 18–29</span></header>
+  <p>Reset disengaja mengembalikan baris ke pengelolaan sistem agar siklus auto-selesai berjalan lagi (BR-03.6).</p>
+  <div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><pre><code class="language-sql">INSERT INTO reading_progress (user_id, book_id, last_page)
+VALUES (?, ?, 1) AS baru
+ON DUPLICATE KEY UPDATE last_page = 1;
+
+INSERT INTO collections (user_id, book_id, status, status_source)
+VALUES (?, ?, &#x27;reading&#x27;, &#x27;system&#x27;) AS baru
+ON DUPLICATE KEY UPDATE status = &#x27;reading&#x27;, status_source = &#x27;system&#x27;;</code></pre></div>
+</section>
+<section class="card pad sql-card" id="sql-guard">
+  <header class="sql-head"><h2>Guard admin terakhir (admin/users.php)</h2><span class="badge-soft">public/admin/users.php baris 21–24 &amp; 82–84</span></header>
+  <p>Sebelum menonaktifkan/menurunkan role, server menghitung admin aktif lain. Bila hasilnya 0, aksi ditolak — admin aktif terakhir tidak bisa hilang (BR-07.2).</p>
+  <div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><pre><code class="language-sql">SELECT COUNT(*) FROM users
+WHERE role = &#x27;admin&#x27; AND is_active = 1 AND user_id &lt;&gt; ?;  -- &lt;&gt; id target
+
+-- nonaktif/aktif akun (soft-delete, tanpa hapus keras)
+UPDATE users SET is_active = ? WHERE user_id = ?;</code></pre></div>
+</section>
+<section class="card pad sql-card" id="sql-slug">
+  <header class="sql-head"><h2>Slug unik (includes/slug_helper.php)</h2><span class="badge-soft">includes/slug_helper.php</span></header>
+  <p>Slug dijadikan identitas URL publik. Bentrok diberi akhiran angka: dasar, dasar-2, dasar-3, dan seterusnya.</p>
+  <div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><pre><code class="language-sql">SELECT COUNT(*) FROM `books`  WHERE slug = ?;   -- dan `authors`
+-- loop: slug = dasar, lalu dasar-2, dasar-3 … sampai COUNT = 0
+-- tabel hanya boleh dari kode internal (books/authors), bukan input user</code></pre></div>
+</section>
+<section class="card pad sql-card" id="sql-ddl">
+  <header class="sql-head"><h2>DDL inti + kunci unik</h2><span class="badge-soft">database/for_demo_optl_pustaka.sql baris 30–341</span></header>
+  <p>Tujuh tabel 3NF, semua InnoDB utf8mb4. Kunci unik menjaga aturan bisnis di level database: satu rak per (user, buku), satu progres per (user, buku), slug & ISBN & email tunggal.</p>
+  <div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><pre><code class="language-sql">CREATE TABLE users (
+  user_id int UNSIGNED NOT NULL AUTO_INCREMENT,
+  email varchar(100) NOT NULL,
+  password_hash varchar(255) NOT NULL,
+  display_name varchar(100) NOT NULL,
+  role enum(&#x27;admin&#x27;,&#x27;member&#x27;) NOT NULL DEFAULT &#x27;member&#x27;,
+  is_active tinyint(1) NOT NULL DEFAULT 1,
+  created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id), UNIQUE KEY uq_users_email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE collections (
+  collection_id int UNSIGNED NOT NULL AUTO_INCREMENT,
+  user_id int UNSIGNED NOT NULL,
+  book_id int UNSIGNED NOT NULL,
+  status enum(&#x27;to_read&#x27;,&#x27;reading&#x27;,&#x27;not_interested&#x27;,&#x27;finished&#x27;) NOT NULL DEFAULT &#x27;to_read&#x27;,
+  status_source enum(&#x27;system&#x27;,&#x27;user&#x27;) NOT NULL DEFAULT &#x27;system&#x27;,
+  created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (collection_id),
+  UNIQUE KEY uq_collections_user_book (user_id, book_id),
+  KEY fk_collections_book (book_id),
+  CONSTRAINT fk_collections_user FOREIGN KEY (user_id) REFERENCES users (user_id),
+  CONSTRAINT fk_collections_book FOREIGN KEY (book_id) REFERENCES books (book_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- (reading_progress serupa: UNIQUE uq_progress_user_book (user_id, book_id))</code></pre></div>
+</section>
+</main>
+<footer class="foot">
+  <div class="wrap foot-in">
+    <p><b>Dokumentasi PustakaDigital</b> — Perpustakaan Digital Baca Online. Situs dokumentasi bisnis (alur, aturan, basis data, live coding), bukan kode aplikasi.</p>
+    <p>Repo aplikasi: <code>0Zeroiszero/Perpustakaan-berbasis-web</code> · Repo dokumentasi: <code>0Zeroiszero/dokumentasi_perpustakaan_digital_berbasis_web</code> · Branch aplikasi <code>optl/rombak-total</code> · Database <code>optl_pustaka</code></p>
+  </div>
+</footer>
+<button class="to-top" id="toTop" aria-label="Kembali ke atas"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7M12 5v14"/></svg></button>
+<script src="assets/vendor/mermaid.min.js"></script>
+<script src="assets/vendor/highlight.min.js"></script>
+<script src="assets/app.js"></script>
+
+</body>
+</html>

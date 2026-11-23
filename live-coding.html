@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Coding — Dokumentasi PustakaDigital</title>
+<meta name="description" content="8 snippet live coding asdos: registrasi, login, katalog, simpan status rak, auto-save progres, baca ulang, stream PDF, logout — lengkap dengan expected output.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Lewati ke konten</a>
+<header class="topbar">
+  <div class="wrap bar">
+    <a class="brand" href="index.html">
+      <span class="brand-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5zM20 18H6.5A2.5 2.5 0 0 0 4 20.5"/></svg></span>
+      <span class="brand-tx">Dokumentasi <b>PustakaDigital</b></span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Navigasi utama"><a href="index.html">Beranda</a><a href="alur-bisnis.html">Alur Bisnis</a><a href="business-rules.html">Business Rules</a><a href="erd.html">ERD</a><a href="sql.html">Query SQL</a><a href="live-coding.html" aria-current="page">Live Coding</a><a href="screenshots.html">Screenshot</a><a href="tentang.html">Tentang</a><a href="spesifikasi.html">Spesifikasi</a></nav>
+    <button class="icon-btn nav-btn" id="navBtn" aria-expanded="false" aria-controls="nav" aria-label="Buka menu"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Posisi"><a href="index.html">Beranda</a><span class="sep">/</span><span>Live Coding</span></nav><header class="page-head"><h1>Live Coding Asdos — HTML + PHP + sedikit JS (tanpa CSS)</h1><p class="lead">Delapan latihan yang bias muncul saat live coding, ditulis sesederhana mungkin agar fokus ke <b>pemahaman</b>: pola prepared statement, hash, upsert, lifecycle status, dan guard. Semua snippet sengaja <b>tanpa CSS</b>. Setiap kartu punya tab <b>Kode</b> dan <b>Expected Output</b> — output yang mungkin keluar di browser ditampilkan apa adanya di dalam frame. Jalankan lokal: impor dump, lalu <code>php -S localhost:8000</code> di folder snippet, login pakai akun demo.</p></header>
+<section class="card pad">
+  <h2>Pola helper aplikasi asli</h2>
+  <p>Snippet di bawah menulis <code>mysqli</code> polos supaya terlihat. Aplikasi asli membungkusnya dalam
+  helper di <code>includes/db.php</code> dan <code>includes/auth_guard.php</code> — ini yang perlu kamu
+  sebut saat asdos menanyakan "di mana prepared statement-nya?":</p>
+  <div class="table-wrap"><table><thead><tr><th>Helper</th><th>Fungsi</th></tr></thead><tbody><tr><td><code>q($sql, $params)</code></td><td>Prepare + bind (semua param jadi string 's') + execute; mengembalikan mysqli_stmt.</td></tr><tr><td><code>rows($sql, $params)</code></td><td>Semua hasil sebagai array asosiatif — dipakai daftar kartu/tabel.</td></tr><tr><td><code>row($sql, $params)</code></td><td>Satu baris pertama atau null — dipakai cek ada/tidak (email duplikat, buku aktif).</td></tr><tr><td><code>scalar($sql, $params)</code></td><td>Nilai tunggal (COUNT*) — dipakai statistik dashboard dan guard admin terakhir.</td></tr><tr><td><code>e($nilai)</code></td><td>htmlspecialchars ENT_QUOTES — semua output HTML wajib lewat ini.</td></tr><tr><td><code>akun()</code></td><td>Akun sesi dibaca ulang dari DB tiap request: perubahan role/is_active langsung berlaku.</td></tr><tr><td><code>wajib_login() / wajib_admin()</code></td><td>Guard halaman: tamu → login?next=, member → dashboard-user.</td></tr><tr><td><code>cek_csrf()</code></td><td>Token sesi vs POST dengan hash_equals; kosong/kedaluwarsa → HTTP 419.</td></tr><tr><td><code>flash($pesan)</code></td><td>Pesan sekali-tampil lewat redirect (pola PRG: Post-Redirect-Get).</td></tr></tbody></table></div>
+</section>
+
+<section class="snippet card pad" id="sn-registrasi">
+  <header class="sn-head">
+    <span class="badge">Snippet 1</span>
+    <h2>Registrasi akun member</h2>
+    <p class="muted">Menguji pemahaman validasi sederhana, password_hash, dan prepared statement INSERT.</p>
+    <p class="map-note"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/></svg> BR-01.1 · BR-01.3 · BL-01 (versi asli: register.php + helper q()/e() + CSRF + redirect PRG)</p>
+  </header>
+  <div class="tabs" data-tabs>
+    <div class="tab-btns"><button class="chip tab-b active" data-tab="t0">Kode · registrasi.php</button><button class="chip tab-b active" data-tab="o0">Output</button></div>
+    <div class="tab-p active" data-p="t0"><div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><span class="code-fn">registrasi.php</span><pre><code class="language-php">&lt;?php
+// registrasi.php — versi live coding: HTML + PHP tanpa CSS, fokus pemahaman.
+$koneksi = new mysqli(&#x27;127.0.0.1&#x27;, &#x27;root&#x27;, &#x27;&#x27;, &#x27;optl_pustaka&#x27;);
+
+$pesan = &#x27;&#x27;;
+if ($_SERVER[&#x27;REQUEST_METHOD&#x27;] === &#x27;POST&#x27;) {
+    $nama     = trim($_POST[&#x27;nama&#x27;] ?? &#x27;&#x27;);
+    $email    = strtolower(trim($_POST[&#x27;email&#x27;] ?? &#x27;&#x27;));
+    $password = $_POST[&#x27;password&#x27;] ?? &#x27;&#x27;;
+
+    // BR-01.3: email unik + password minimal 6 karakter
+    $cek = $koneksi-&gt;prepare(&#x27;SELECT user_id FROM users WHERE email = ?&#x27;);
+    $cek-&gt;bind_param(&#x27;s&#x27;, $email);
+    $cek-&gt;execute();
+
+    if ($nama === &#x27;&#x27; || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $pesan = &#x27;Nama wajib diisi dan email harus valid.&#x27;;
+    } elseif ($cek-&gt;get_result()-&gt;num_rows &gt; 0) {
+        $pesan = &#x27;Email sudah terdaftar.&#x27;;
+    } elseif (strlen($password) &lt; 6) {
+        $pesan = &#x27;Password minimal 6 karakter.&#x27;;
+    } else {
+        // BR-01.1: password polos TIDAK PERNAH disimpan — simpan hash-nya saja
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $simpan = $koneksi-&gt;prepare(
+            &#x27;INSERT INTO users (email, password_hash, display_name, role, is_active)
+             VALUES (?, ?, ?, &quot;member&quot;, 1)&#x27;
+        );
+        $simpan-&gt;bind_param(&#x27;sss&#x27;, $email, $hash, $nama);
+        $simpan-&gt;execute();
+        $pesan = &#x27;Akun berhasil dibuat. Silakan login.&#x27;;
+    }
+}
+?&gt;
+&lt;h2&gt;Registrasi&lt;/h2&gt;
+&lt;form method=&quot;post&quot;&gt;
+  &lt;label&gt;Nama: &lt;input name=&quot;nama&quot;&gt;&lt;/label&gt;&lt;br&gt;
+  &lt;label&gt;Email: &lt;input name=&quot;email&quot; type=&quot;email&quot;&gt;&lt;/label&gt;&lt;br&gt;
+  &lt;label&gt;Password: &lt;input name=&quot;password&quot; type=&quot;password&quot;&gt;&lt;/label&gt;&lt;br&gt;
+  &lt;button type=&quot;submit&quot;&gt;Daftar&lt;/button&gt;
+&lt;/form&gt;
+&lt;p&gt;&lt;?= htmlspecialchars($pesan) ?&gt;&lt;/p&gt;</code></pre></div></div><div class="tab-p active" data-p="o0"><div class="term"><div class="term-bar"><i></i><i></i><i></i><span>registrasi.php — hasil render</span></div><div class="term-body"><h2>Registrasi</h2>
+<form>
+  <label>Nama: <input value="Siti Aulia"></label><br>
+  <label>Email: <input value="siti@email.com" type="email"></label><br>
+  <label>Password: <input type="password" value="••••••"></label><br>
+  <button type="submit">Daftar</button>
+</form>
+<p>Akun berhasil dibuat. Silakan login.</p></div></div><p class="muted small">Submit valid → akun member aktif dibuat (lihat baris baru di tabel users, password_hash $2y$12…). Submit email duplikat menghasilkan 'Email sudah terdaftar.'</p></div>
+  </div>
+</section>
+<section class="snippet card pad" id="sn-login">
+  <header class="sn-head">
+    <span class="badge">Snippet 2</span>
+    <h2>Login dengan password_verify + is_active</h2>
+    <p class="muted">Menguji pemahaman verifikasi hash, penolakan akun nonaktif, session_regenerate_id, dan alur ?next=.</p>
+    <p class="map-note"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/></svg> BR-01.1 · BR-01.2 · BR-02.2 · BL-01 langkah 4–5 (versi asli: login_user() di auth_guard.php)</p>
+  </header>
+  <div class="tabs" data-tabs>
+    <div class="tab-btns"><button class="chip tab-b active" data-tab="t0">Kode · login.php</button><button class="chip tab-b active" data-tab="o0">Output</button></div>
+    <div class="tab-p active" data-p="t0"><div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><span class="code-fn">login.php</span><pre><code class="language-php">&lt;?php
+// login.php — verifikasi hash + is_active + sesi.
+session_start();
+$koneksi = new mysqli(&#x27;127.0.0.1&#x27;, &#x27;root&#x27;, &#x27;&#x27;, &#x27;optl_pustaka&#x27;);
+
+$pesan = &#x27;&#x27;;
+if ($_SERVER[&#x27;REQUEST_METHOD&#x27;] === &#x27;POST&#x27;) {
+    $email = strtolower(trim($_POST[&#x27;email&#x27;] ?? &#x27;&#x27;));
+    $stmt = $koneksi-&gt;prepare(
+        &#x27;SELECT user_id, password_hash, is_active, role FROM users WHERE email = ?&#x27;
+    );
+    $stmt-&gt;bind_param(&#x27;s&#x27;, $email);
+    $stmt-&gt;execute();
+    $user = $stmt-&gt;get_result()-&gt;fetch_assoc();
+
+    if (!$user || !password_verify($_POST[&#x27;password&#x27;] ?? &#x27;&#x27;, $user[&#x27;password_hash&#x27;])) {
+        $pesan = &#x27;Email atau password salah.&#x27;;          // asli: redirect ?gagal=1
+    } elseif ((int) $user[&#x27;is_active&#x27;] === 0) {
+        $pesan = &#x27;Akun dinonaktifkan oleh admin.&#x27;;      // asli: redirect ?nonaktif=1
+    } else {
+        session_regenerate_id(true);                    // cegah session fixation
+        $_SESSION[&#x27;user_id&#x27;] = (int) $user[&#x27;user_id&#x27;];
+        $pesan = &#x27;Login sukses. Masuk sebagai &#x27; . $user[&#x27;role&#x27;] . &#x27;.&#x27;;
+        // asli: redirect ?next= (tervalidasi lokal) atau dashboard per role
+    }
+}
+?&gt;
+&lt;form method=&quot;post&quot;&gt;
+  &lt;label&gt;Email: &lt;input name=&quot;email&quot; type=&quot;email&quot;&gt;&lt;/label&gt;&lt;br&gt;
+  &lt;label&gt;Password: &lt;input name=&quot;password&quot; type=&quot;password&quot;&gt;&lt;/label&gt;&lt;br&gt;
+  &lt;button type=&quot;submit&quot;&gt;Masuk&lt;/button&gt;
+&lt;/form&gt;
+&lt;p&gt;&lt;?= htmlspecialchars($pesan) ?&gt;&lt;/p&gt;</code></pre></div></div><div class="tab-p active" data-p="o0"><div class="term"><div class="term-bar"><i></i><i></i><i></i><span>login.php — hasil render</span></div><div class="term-body"><form>
+  <label>Email: <input value="admin@pustaka.com" type="email"></label><br>
+  <label>Password: <input type="password" value="•••••••••"></label><br>
+  <button type="submit">Masuk</button>
+</form>
+<p>Login sukses. Masuk sebagai admin.</p></div></div><p class="muted small">admin@pustaka.com / admin123 → masuk sebagai admin; andi@email.com / andi123 → member. Password salah → 'Email atau password salah.', akun sapi@mata.com (is_active=0) → pesan nonaktif.</p></div>
+  </div>
+</section>
+<section class="snippet card pad" id="sn-katalog">
+  <header class="sn-head">
+    <span class="badge">Snippet 3</span>
+    <h2>Ambil data katalog (pencarian server-side)</h2>
+    <p class="muted">Menguji pemahaman menyusun WHERE dinamis dengan placeholder tetap prepared, membaca VIEW, dan merender hasil.</p>
+    <p class="map-note"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/></svg> BR-02.4 · BR-05.1 · BR-05.2 · BL-02 (versi asli: catalog.php + helper rows())</p>
+  </header>
+  <div class="tabs" data-tabs>
+    <div class="tab-btns"><button class="chip tab-b active" data-tab="t0">Kode · katalog.php</button><button class="chip tab-b active" data-tab="o0">Output</button></div>
+    <div class="tab-p active" data-p="t0"><div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><span class="code-fn">katalog.php</span><pre><code class="language-php">&lt;?php
+// katalog.php — pencarian lewat VIEW, WHERE disusun dinamis tetap prepared.
+$koneksi = new mysqli(&#x27;127.0.0.1&#x27;, &#x27;root&#x27;, &#x27;&#x27;, &#x27;optl_pustaka&#x27;);
+$q = trim($_GET[&#x27;q&#x27;] ?? &#x27;&#x27;);
+$kategori = trim($_GET[&#x27;kategori&#x27;] ?? &#x27;&#x27;);
+
+$sql = &#x27;SELECT * FROM v_books_catalog WHERE is_active = 1&#x27;;
+$params = []; $tipe = &#x27;&#x27;;
+if ($q !== &#x27;&#x27;) {
+    $sql .= &#x27; AND (title LIKE ? OR author_name LIKE ?)&#x27;;
+    $params[] = &#x27;%&#x27; . $q . &#x27;%&#x27;;
+    $params[] = &#x27;%&#x27; . $q . &#x27;%&#x27;;
+    $tipe .= &#x27;ss&#x27;;
+}
+if ($kategori !== &#x27;&#x27;) {
+    $sql .= &#x27; AND genre_name = ?&#x27;;
+    $params[] = $kategori;
+    $tipe .= &#x27;s&#x27;;
+}
+$sql .= &#x27; ORDER BY book_id DESC&#x27;;
+
+$stmt = $koneksi-&gt;prepare($sql);
+if ($params) { $stmt-&gt;bind_param($tipe, ...$params); }
+$stmt-&gt;execute();
+$buku = $stmt-&gt;get_result()-&gt;fetch_all(MYSQLI_ASSOC);
+?&gt;
+&lt;form method=&quot;get&quot;&gt;
+  &lt;label&gt;Cari: &lt;input name=&quot;q&quot; value=&quot;&lt;?= htmlspecialchars($q) ?&gt;&quot;&gt;&lt;/label&gt;
+  &lt;button type=&quot;submit&quot;&gt;Cari&lt;/button&gt;
+&lt;/form&gt;
+&lt;p&gt;Ditemukan &lt;?= count($buku) ?&gt; buku.&lt;/p&gt;
+&lt;table border=&quot;1&quot;&gt;
+  &lt;tr&gt;&lt;th&gt;Judul&lt;/th&gt;&lt;th&gt;Penulis&lt;/th&gt;&lt;th&gt;Genre&lt;/th&gt;&lt;th&gt;Hal.&lt;/th&gt;&lt;/tr&gt;
+  &lt;?php foreach ($buku as $b): ?&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;?= htmlspecialchars($b[&#x27;title&#x27;]) ?&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;?= htmlspecialchars($b[&#x27;author_name&#x27;]) ?&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;?= htmlspecialchars($b[&#x27;genre_name&#x27;]) ?&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;?= (int) $b[&#x27;page_count&#x27;] ?&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;?php endforeach; ?&gt;
+&lt;/table&gt;</code></pre></div></div><div class="tab-p active" data-p="o0"><div class="term"><div class="term-bar"><i></i><i></i><i></i><span>katalog.php — hasil render</span></div><div class="term-body"><form>
+  <label>Cari: <input value=""></label>
+  <button type="submit">Cari</button>
+</form>
+<p>Ditemukan 11 buku.</p>
+<table border="1">
+  <tr><th>Judul</th><th>Penulis</th><th>Genre</th><th>Hal.</th></tr>
+  <tr><td>Atomic Habits: The life-changing million copy bestseller</td><td>James Clear</td><td>Psikologi</td><td>285</td></tr>
+  <tr><td>Prinsip Desain UI/UX</td><td>Pramoedya Ananta Toer</td><td>Desain</td><td>1</td></tr>
+  <tr><td>Psikologi Remaja</td><td>Sapardi Djoko Damono</td><td>Psikologi</td><td>12</td></tr>
+  <tr><td>Metode Pembelajaran Aktif</td><td>Raditya Dika</td><td>Pendidikan</td><td>12</td></tr>
+  <tr><td>Harry Potter 1</td><td>Haruki Murakami</td><td>Novel</td><td>1</td></tr>
+  <tr><td>Strategi Bisnis Digital</td><td>Ahmad Tohari</td><td>Bisnis</td><td>1</td></tr>
+  <tr><td>Sejarah Nusantara</td><td>Dee Lestari</td><td>Sejarah</td><td>12</td></tr>
+  <tr><td>Fisika Dasar Modern</td><td>Tere Liye</td><td>Sains</td><td>1</td></tr>
+  <tr><td>Laskar Pelangi</td><td>George R.R. Martin</td><td>Novel</td><td>12</td></tr>
+  <tr><td>Belajar Java OOP</td><td>J.K. Rowling</td><td>Teknologi</td><td>1</td></tr>
+  <tr><td>Dasar-Dasar Basis Data</td><td>Pramoedya Ananta Toer</td><td>Teknologi</td><td>1</td></tr>
+</table></div></div><p class="muted small">Output persis mengikuti data seed for_demo_optl_pustaka.sql (urutan book_id DESC). ?q=pelangi → hanya Laskar Pelangi; buku nonaktif tidak pernah muncul karena WHERE is_active = 1.</p></div>
+  </div>
+</section>
+<section class="snippet card pad" id="sn-rak">
+  <header class="sn-head">
+    <span class="badge">Snippet 4</span>
+    <h2>Simpan status Rak Saya (dropdown + upsert)</h2>
+    <p class="muted">Menguji pemahaman validasi enum, UNIQUE (user, book), dan INSERT … ON DUPLICATE KEY UPDATE.</p>
+    <p class="map-note"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/></svg> BR-03.1 · BR-03.5 · BL-03 (versi asli: actions/collection-save.php + CSRF + referer)</p>
+  </header>
+  <div class="tabs" data-tabs>
+    <div class="tab-btns"><button class="chip tab-b active" data-tab="t0">Kode · rak.php</button><button class="chip tab-b active" data-tab="o0">Output</button></div>
+    <div class="tab-p active" data-p="t0"><div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><span class="code-fn">rak.php</span><pre><code class="language-php">&lt;?php
+// rak.php — dropdown status langsung POST + upsert ke collections.
+session_start();               // demo: anggap sudah login sebagai user_id 2 (andi@email.com)
+$koneksi = new mysqli(&#x27;127.0.0.1&#x27;, &#x27;root&#x27;, &#x27;&#x27;, &#x27;optl_pustaka&#x27;);
+$user_id = $_SESSION[&#x27;user_id&#x27;] ?? 2;
+
+const STATUS_LABEL = [
+    &#x27;to_read&#x27;       =&gt; &#x27;Akan dibaca&#x27;,
+    &#x27;reading&#x27;       =&gt; &#x27;Sedang dibaca&#x27;,
+    &#x27;finished&#x27;      =&gt; &#x27;Telah dibaca&#x27;,
+    &#x27;not_interested&#x27;=&gt; &#x27;Tidak Tertarik&#x27;,
+];
+
+$pesan = &#x27;&#x27;;
+if ($_SERVER[&#x27;REQUEST_METHOD&#x27;] === &#x27;POST&#x27;) {
+    $book_id = (int) ($_POST[&#x27;book_id&#x27;] ?? 0);
+    $status  = $_POST[&#x27;status&#x27;] ?? &#x27;&#x27;;
+
+    // validasi ganda: nilai enum dikenal + buku masih aktif
+    $cek = $koneksi-&gt;prepare(&#x27;SELECT book_id FROM books WHERE book_id = ? AND is_active = 1&#x27;);
+    $cek-&gt;bind_param(&#x27;i&#x27;, $book_id);
+    $cek-&gt;execute();
+
+    if (!isset(STATUS_LABEL[$status]) || $cek-&gt;get_result()-&gt;num_rows === 0) {
+        $pesan = &#x27;Status atau buku tidak valid.&#x27;;
+    } else {
+        // UNIQUE uq_collections_user_book (user_id, book_id) → cukup satu upsert
+        $sql = &#x27;INSERT INTO collections (user_id, book_id, status, status_source)
+                VALUES (?, ?, ?, &quot;user&quot;) AS baru
+                ON DUPLICATE KEY UPDATE status = baru.status, status_source = &quot;user&quot;&#x27;;
+        $simpan = $koneksi-&gt;prepare($sql);
+        $simpan-&gt;bind_param(&#x27;iis&#x27;, $user_id, $book_id, $status);
+        $simpan-&gt;execute();
+        $pesan = &#x27;Buku disimpan ke Rak Saya: &#x27; . STATUS_LABEL[$status] . &#x27;.&#x27;;
+    }
+}
+?&gt;
+&lt;form method=&quot;post&quot;&gt;
+  &lt;label&gt;Buku:
+    &lt;select name=&quot;book_id&quot;&gt;
+      &lt;option value=&quot;84&quot;&gt;Atomic Habits&lt;/option&gt;
+      &lt;option value=&quot;3&quot;&gt;Laskar Pelangi&lt;/option&gt;
+      &lt;option value=&quot;1&quot;&gt;Dasar-Dasar Basis Data&lt;/option&gt;
+    &lt;/select&gt;
+  &lt;/label&gt;&lt;br&gt;
+  &lt;label&gt;Status:
+    &lt;select name=&quot;status&quot;&gt;
+      &lt;?php foreach (STATUS_LABEL as $nilai =&gt; $label): ?&gt;
+      &lt;option value=&quot;&lt;?= $nilai ?&gt;&quot;&gt;&lt;?= $label ?&gt;&lt;/option&gt;
+      &lt;?php endforeach; ?&gt;
+    &lt;/select&gt;
+  &lt;/label&gt;&lt;br&gt;
+  &lt;button type=&quot;submit&quot;&gt;Simpan ke Rak&lt;/button&gt;
+&lt;/form&gt;
+&lt;p&gt;&lt;?= htmlspecialchars($pesan) ?&gt;&lt;/p&gt;</code></pre></div></div><div class="tab-p active" data-p="o0"><div class="term"><div class="term-bar"><i></i><i></i><i></i><span>rak.php — hasil render</span></div><div class="term-body"><form>
+  <label>Buku: <select><option>Atomic Habits</option></select></label><br>
+  <label>Status: <select><option>Sedang dibaca</option></select></label><br>
+  <button type="submit">Simpan ke Rak</button>
+</form>
+<p>Buku disimpan ke Rak Saya: Sedang dibaca.</p></div></div><p class="muted small">Dropdown di-submit langsung tanpa tombol terpisah (polanya sama dengan dropdown Bootstrap di aplikasi asli). Pilih 'Telah dibaca' lalu 'Baca Ulang' di snippet 6 untuk melihat lifecycle.</p></div>
+  </div>
+</section>
+<section class="snippet card pad" id="sn-progres">
+  <header class="sn-head">
+    <span class="badge">Snippet 5</span>
+    <h2>Auto-save progres baca (iframe, bukan AJAX)</h2>
+    <p class="muted">Menguji pemahaman transport form ke iframe, clamp halaman, dan lifecycle status_source system/user.</p>
+    <p class="map-note"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/></svg> BR-03.2 · BR-03.4 · BR-04.1 · BR-04.2 · BR-04.4 · BL-04 (versi asli: read.php + actions/progress-save.php)</p>
+  </header>
+  <div class="tabs" data-tabs>
+    <div class="tab-btns"><button class="chip tab-b active" data-tab="t0">Kode · progres.html</button><button class="chip tab-b active" data-tab="o0">Output</button><button class="chip tab-b" data-tab="t1">Kode · progres-save.php</button><button class="chip tab-b" data-tab="o1">Output</button></div>
+    <div class="tab-p active" data-p="t0"><div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><span class="code-fn">progres.html + progres-save.php</span><pre><code class="language-html">&lt;!-- progres.html — form tersembunyi bertarget iframe (BR-04.4: bukan AJAX/fetch) --&gt;
+&lt;iframe name=&quot;progressFrame&quot; hidden&gt;&lt;/iframe&gt;
+&lt;form id=&quot;formProgres&quot; method=&quot;post&quot; action=&quot;progres-save.php&quot; target=&quot;progressFrame&quot;&gt;
+  &lt;input type=&quot;hidden&quot; name=&quot;book_id&quot; value=&quot;84&quot;&gt;
+  &lt;input type=&quot;hidden&quot; name=&quot;last_page&quot; value=&quot;1&quot;&gt;
+  &lt;input type=&quot;hidden&quot; name=&quot;total_pages&quot; value=&quot;285&quot;&gt;
+&lt;/form&gt;
+&lt;button onclick=&quot;simpanProgres(10)&quot;&gt;Buka halaman 10 (simulasi PDF.js)&lt;/button&gt;
+&lt;button onclick=&quot;simpanProgres(285)&quot;&gt;Buka halaman 285 (terakhir)&lt;/button&gt;
+&lt;p id=&quot;ket&quot;&gt;Halaman aktif: 1 dari 285.&lt;/p&gt;
+
+&lt;script&gt;
+  // PDF.js memanggil fungsi ini setiap halaman dirender / berganti.
+  function simpanProgres(halaman) {
+    document.querySelector(&#x27;#formProgres [name=&quot;last_page&quot;]&#x27;).value = halaman;
+    document.getElementById(&#x27;formProgres&#x27;).submit();     // POST senyap ke iframe
+    document.getElementById(&#x27;ket&#x27;).textContent = &#x27;Halaman aktif: &#x27; + halaman + &#x27; dari 285.&#x27;;
+  }
+&lt;/script&gt;</code></pre></div></div><div class="tab-p active" data-p="o0"><div class="term"><div class="term-bar"><i></i><i></i><i></i><span>progres.html — hasil render</span></div><div class="term-body"><button>Buka halaman 10 (simulasi PDF.js)</button>
+<button>Buka halaman 285 (terakhir)</button>
+<p id="ket">Halaman aktif: 10 dari 285.</p></div></div><p class="muted small">Halaman TIDAK reload — hanya iframe target yang menerima respon 'OK — last_page tersimpan: 10'. Di aplikasi asli, PDF.js memanggil submit ini tiap render, sampul reader tak pernah berkedip.</p></div><div class="tab-p" data-p="t1"><div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><span class="code-fn">progres.html + progres-save.php</span><pre><code class="language-php">&lt;?php
+// progres-save.php — clamp + lifecycle + upsert (tanggapan iframe).
+session_start();               // user_id 2 (andi@email.com)
+$koneksi = new mysqli(&#x27;127.0.0.1&#x27;, &#x27;root&#x27;, &#x27;&#x27;, &#x27;optl_pustaka&#x27;);
+$user_id = $_SESSION[&#x27;user_id&#x27;] ?? 2;
+$book_id = (int) ($_POST[&#x27;book_id&#x27;] ?? 0);
+$last    = (int) ($_POST[&#x27;last_page&#x27;] ?? 1);
+
+$buku = $koneksi-&gt;prepare(&#x27;SELECT page_count FROM books WHERE book_id = ? AND is_active = 1&#x27;);
+$buku-&gt;bind_param(&#x27;i&#x27;, $book_id);
+$buku-&gt;execute();
+$buku = $buku-&gt;get_result()-&gt;fetch_assoc();
+if (!$buku) { http_response_code(404); exit(&#x27;Buku tidak ditemukan.&#x27;); }
+
+// BR-04.2: clamp ke 1..page_count (halaman 999 → 285)
+$last = max(1, min($last, (int) $buku[&#x27;page_count&#x27;]));
+
+// baca status sekarang
+$koleksi = $koneksi-&gt;prepare(&#x27;SELECT status, status_source FROM collections WHERE user_id = ? AND book_id = ?&#x27;);
+$koleksi-&gt;bind_param(&#x27;ii&#x27;, $user_id, $book_id);
+$koleksi-&gt;execute();
+$koleksi = $koleksi-&gt;get_result()-&gt;fetch_assoc();
+
+if (!$koleksi) {
+    // BR-03.3: baca pertama → Sedang dibaca milik SISTEM (bukan langsung selesai)
+    $buat = $koneksi-&gt;prepare(
+        &#x27;INSERT INTO collections (user_id, book_id, status, status_source)
+         VALUES (?, ?, &quot;reading&quot;, &quot;system&quot;)&#x27;
+    );
+    $buat-&gt;bind_param(&#x27;ii&#x27;, $user_id, $book_id);
+    $buat-&gt;execute();
+} elseif ($koleksi[&#x27;status_source&#x27;] === &#x27;system&#x27; &amp;&amp; $last &gt;= (int) $buku[&#x27;page_count&#x27;]) {
+    // BR-03.4: baris system otomatis selesai; baris user TIDAK disentuh
+    $selesai = $koneksi-&gt;prepare(
+        &#x27;UPDATE collections SET status = &quot;finished&quot;
+         WHERE user_id = ? AND book_id = ? AND status_source = &quot;system&quot;&#x27;
+    );
+    $selesai-&gt;bind_param(&#x27;ii&#x27;, $user_id, $book_id);
+    $selesai-&gt;execute();
+}
+
+// BR-04.1: upsert last_page (UNIQUE user+book)
+$q = $koneksi-&gt;prepare(
+    &#x27;INSERT INTO reading_progress (user_id, book_id, last_page)
+     VALUES (?, ?, ?) AS baru
+     ON DUPLICATE KEY UPDATE last_page = baru.last_page&#x27;
+);
+$q-&gt;bind_param(&#x27;iii&#x27;, $user_id, $book_id, $last);
+$q-&gt;execute();
+
+echo &#x27;OK — last_page tersimpan: &#x27; . $last;</code></pre></div></div><div class="tab-p" data-p="o1"><div class="term"><div class="term-bar"><i></i><i></i><i></i><span>progres-save.php — hasil render</span></div><div class="term-body">OK — last_page tersimpan: 10</div></div><p class="muted small">Respon teks polos di dalam iframe. Halaman 285 (terakhir) membuat baris system berstatus finished; kalau user sudah memilih status sendiri, status tidak berubah.</p></div>
+  </div>
+</section>
+<section class="snippet card pad" id="sn-reset">
+  <header class="sn-head">
+    <span class="badge">Snippet 6</span>
+    <h2>Baca Ulang — reset progres</h2>
+    <p class="muted">Menguji pemahaman reset last_page ke 1 dan pengembalian status ke pengelolaan sistem.</p>
+    <p class="map-note"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/></svg> BR-03.6 · BL-05 (versi asli: actions/progress-reset.php + modal konfirmasi di UI)</p>
+  </header>
+  <div class="tabs" data-tabs>
+    <div class="tab-btns"><button class="chip tab-b active" data-tab="t0">Kode · baca-ulang.php</button><button class="chip tab-b active" data-tab="o0">Output</button></div>
+    <div class="tab-p active" data-p="t0"><div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><span class="code-fn">baca-ulang.php</span><pre><code class="language-php">&lt;?php
+// baca-ulang.php — reset progres + kembalikan ke pengelolaan sistem.
+session_start();               // user_id 2
+$koneksi = new mysqli(&#x27;127.0.0.1&#x27;, &#x27;root&#x27;, &#x27;&#x27;, &#x27;optl_pustaka&#x27;);
+$user_id = $_SESSION[&#x27;user_id&#x27;] ?? 2;
+$book_id = (int) ($_POST[&#x27;book_id&#x27;] ?? 84);
+
+// last_page kembali ke 1 (upsert, bukan INSERT baru)
+$a = $koneksi-&gt;prepare(
+    &#x27;INSERT INTO reading_progress (user_id, book_id, last_page)
+     VALUES (?, ?, 1) AS baru
+     ON DUPLICATE KEY UPDATE last_page = 1&#x27;
+);
+$a-&gt;bind_param(&#x27;ii&#x27;, $user_id, $book_id);
+$a-&gt;execute();
+
+// status reading + source system agar auto-selesai bisa jalan lagi (BR-03.6)
+$b = $koneksi-&gt;prepare(
+    &#x27;INSERT INTO collections (user_id, book_id, status, status_source)
+     VALUES (?, ?, &quot;reading&quot;, &quot;system&quot;) AS baru
+     ON DUPLICATE KEY UPDATE status = &quot;reading&quot;, status_source = &quot;system&quot;&#x27;
+);
+$b-&gt;bind_param(&#x27;ii&#x27;, $user_id, $book_id);
+$b-&gt;execute();
+
+echo &#x27;Progres direset ke halaman 1. Melanjutkan ke reader...&#x27;;
+// asli: header(&#x27;Location: &#x27; . url(&#x27;read.php?slug=&#x27; . $slug)); exit;
+?&gt;
+&lt;form method=&quot;post&quot;&gt;
+  &lt;input type=&quot;hidden&quot; name=&quot;book_id&quot; value=&quot;84&quot;&gt;
+  &lt;button type=&quot;submit&quot;&gt;Baca Ulang: Atomic Habits&lt;/button&gt;
+&lt;/form&gt;</code></pre></div></div><div class="tab-p active" data-p="o0"><div class="term"><div class="term-bar"><i></i><i></i><i></i><span>baca-ulang.php — hasil render</span></div><div class="term-body"><p>Progres direset ke halaman 1. Melanjutkan ke reader...</p>
+<form><button>Baca Ulang: Atomic Habits</button></form></div></div><p class="muted small">Setelah snippet ini, kartu buku di Rak Saya kembali 'Sedang dibaca 0%' padahal sebelumnya 'Telah dibaca 100%'. Persis seperti BL-05: reset disengaja selalu lewat konfirmasi modal di UI.</p></div>
+  </div>
+</section>
+<section class="snippet card pad" id="sn-stream">
+  <header class="sn-head">
+    <span class="badge">Snippet 7</span>
+    <h2>Streaming PDF aman (guard sesi + path)</h2>
+    <p class="muted">Menguji pemahaman guard 403, validasi slug, dan pencegahan path traversal dengan realpath.</p>
+    <p class="map-note"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/></svg> Matriks akses (stream.php: tamu 403) · BR-05.3 · BR-06.2 (versi asli: public/stream.php)</p>
+  </header>
+  <div class="tabs" data-tabs>
+    <div class="tab-btns"><button class="chip tab-b active" data-tab="t0">Kode · stream.php</button><button class="chip tab-b active" data-tab="o0">Output</button></div>
+    <div class="tab-p active" data-p="t0"><div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><span class="code-fn">stream.php</span><pre><code class="language-php">&lt;?php
+// stream.php — aliran berkas PDF; 403 tanpa sesi, path tidak bisa dilompati.
+session_start();
+$koneksi = new mysqli(&#x27;127.0.0.1&#x27;, &#x27;root&#x27;, &#x27;&#x27;, &#x27;optl_pustaka&#x27;);
+
+if (!isset($_SESSION[&#x27;user_id&#x27;])) {
+    http_response_code(403);
+    exit(&#x27;Forbidden: masuk dulu untuk membaca buku ini.&#x27;);
+}
+
+$slug = trim($_GET[&#x27;slug&#x27;] ?? &#x27;&#x27;);
+$buku = null;
+if (preg_match(&#x27;/^[a-z0-9-]{1,220}$/&#x27;, $slug)) {          // slug valid saja
+    $q = $koneksi-&gt;prepare(
+        &#x27;SELECT book_id, storage_path FROM v_books_catalog
+         WHERE slug = ? AND is_active = 1&#x27;
+    );
+    $q-&gt;bind_param(&#x27;s&#x27;, $slug);
+    $q-&gt;execute();
+    $buku = $q-&gt;get_result()-&gt;fetch_assoc();
+}
+if (!$buku) { http_response_code(404); exit(&#x27;Buku tidak ditemukan.&#x27;); }
+
+$path = realpath(__DIR__ . &#x27;/../&#x27; . $buku[&#x27;storage_path&#x27;]);
+$awal = realpath(__DIR__ . &#x27;/../storage/ebooks&#x27;);
+
+// realpath + str_starts_with: ?slug=../../users.sql TIDAK bisa keluar storage/
+if ($path === false || $awal === false
+    || !str_starts_with($path, $awal . DIRECTORY_SEPARATOR)
+    || !is_file($path)) {
+    http_response_code(404);
+    exit(&#x27;Berkas tidak ditemukan.&#x27;);
+}
+
+header(&#x27;Content-Type: application/pdf&#x27;);
+header(&#x27;Content-Length: &#x27; . filesize($path));
+header(&#x27;Content-Disposition: inline; filename=&quot;&#x27; . (int) $buku[&#x27;book_id&#x27;] . &#x27;.pdf&quot;&#x27;);
+readfile($path);</code></pre></div></div><div class="tab-p active" data-p="o0"><div class="term"><div class="term-bar"><i></i><i></i><i></i><span>stream.php — hasil render</span></div><div class="term-body"><p><b>Forbidden:</b> masuk dulu untuk membaca buku ini.</p>
+<p><i>(HTTP 403 — ditampilkan bila stream.php dibuka tanpa sesi login)</i></p></div></div><p class="muted small">Tamu yang menempel langsung URL PDF diarahkan 403 — itulah sebabnya reader wajib login. Nama file ke browser selalu {book_id}.pdf, bukan nama asli berkas.</p></div>
+  </div>
+</section>
+<section class="snippet card pad" id="sn-logout">
+  <header class="sn-head">
+    <span class="badge">Snippet 8</span>
+    <h2>Logout yang benar</h2>
+    <p class="muted">Menguji pemahaman penghancuran sesi dan cookie — bukan sekadar pindah halaman.</p>
+    <p class="map-note"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/></svg> BR-01.4 (versi asli: public/logout.php + auth_guard logout_user())</p>
+  </header>
+  <div class="tabs" data-tabs>
+    <div class="tab-btns"><button class="chip tab-b active" data-tab="t0">Kode · logout.php</button><button class="chip tab-b active" data-tab="o0">Output</button></div>
+    <div class="tab-p active" data-p="t0"><div class="codebox"><button class="chip copy" data-copy aria-label="Salin kode">Salin</button><span class="code-fn">logout.php</span><pre><code class="language-php">&lt;?php
+// logout.php — sesi hanya diakhiri di sini, bukan dengan membuka halaman login.
+session_start();
+
+$_SESSION = [];                                   // kosongkan data sesi
+
+if (ini_get(&#x27;session.use_cookies&#x27;)) {             // hapus cookie sesi juga
+    $p = session_get_cookie_params();
+    setcookie(session_name(), &#x27;&#x27;, time() - 42000,
+              $p[&#x27;path&#x27;], $p[&#x27;domain&#x27;], $p[&#x27;secure&#x27;], $p[&#x27;httponly&#x27;]);
+}
+
+session_destroy();
+echo &#x27;Sesi diakhiri. Kembali ke beranda.&#x27;;
+// asli: header(&#x27;Location: &#x27; . url(&#x27;index.php&#x27;)); exit;</code></pre></div></div><div class="tab-p active" data-p="o0"><div class="term"><div class="term-bar"><i></i><i></i><i></i><span>logout.php — hasil render</span></div><div class="term-body"><p>Sesi diakhiri. Kembali ke beranda.</p></div></div><p class="muted small">Setelah ini, stream.php dan semua halaman wajib login kembali 403/redirect — meski tombol Back browser ditekan, Cache-Control: no-store membuat halaman lama tidak muncul dari cache.</p></div>
+  </div>
+</section>
+</main>
+<footer class="foot">
+  <div class="wrap foot-in">
+    <p><b>Dokumentasi PustakaDigital</b> — Perpustakaan Digital Baca Online. Situs dokumentasi bisnis (alur, aturan, basis data, live coding), bukan kode aplikasi.</p>
+    <p>Repo aplikasi: <code>0Zeroiszero/Perpustakaan-berbasis-web</code> · Repo dokumentasi: <code>0Zeroiszero/dokumentasi_perpustakaan_digital_berbasis_web</code> · Branch aplikasi <code>optl/rombak-total</code> · Database <code>optl_pustaka</code></p>
+  </div>
+</footer>
+<button class="to-top" id="toTop" aria-label="Kembali ke atas"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7M12 5v14"/></svg></button>
+<script src="assets/vendor/mermaid.min.js"></script>
+<script src="assets/vendor/highlight.min.js"></script>
+<script src="assets/app.js"></script>
+
+</body>
+</html>
