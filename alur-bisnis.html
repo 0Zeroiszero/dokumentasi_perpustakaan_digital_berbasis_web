@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alur Bisnis — Dokumentasi PustakaDigital</title>
+<meta name="description" content="Animasi alur bisnis &amp; business logic PustakaDigital: registrasi/login, pencarian, status rak, auto-selesai, baca ulang, kelola buku/pengguna, rak saya, navigasi.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Lewati ke konten</a>
+<header class="topbar">
+  <div class="wrap bar">
+    <a class="brand" href="index.html">
+      <span class="brand-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5zM20 18H6.5A2.5 2.5 0 0 0 4 20.5"/></svg></span>
+      <span class="brand-tx">Dokumentasi <b>PustakaDigital</b></span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Navigasi utama"><a href="index.html">Beranda</a><a href="alur-bisnis.html" aria-current="page">Alur Bisnis</a><a href="business-rules.html">Business Rules</a><a href="erd.html">ERD</a><a href="sql.html">Query SQL</a><a href="live-coding.html">Live Coding</a><a href="screenshots.html">Screenshot</a><a href="tentang.html">Tentang</a><a href="spesifikasi.html">Spesifikasi</a></nav>
+    <button class="icon-btn nav-btn" id="navBtn" aria-expanded="false" aria-controls="nav" aria-label="Buka menu"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Posisi"><a href="index.html">Beranda</a><span class="sep">/</span><span>Alur Bisnis</span></nav><header class="page-head"><h1>Business Logic Animasi (BL-01–BL-09)</h1><p class="lead">Sembilan alur bisnis aplikasi, diambil dari dokumen Business Logic &amp; Business Rules. Tekan <b>Putar</b> untuk melihat setiap alur berjalan langkah demi langkah, atau klik langkahnya langsung. Diagram mermaid di bawah tiap alur menunjukkan keputusan dan cabangnya.</p></header>
+<section class="flow card pad" id="bl-01">
+  <div class="flow-head">
+    <span class="badge">BL-01</span>
+    <h2>Registrasi & Login</h2>
+    <p class="muted">Dari form tamu sampai sesi aktif: validasi, hash, regenerasi session, dan arah tujuan sesuai role.</p>
+  </div>
+  <div class="flow-player" data-flow="bl-01">
+    <div class="flow-ctrl">
+      <button class="btn btn-primary btn-sm f-play"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg><span>Putar</span></button>
+      <button class="btn btn-outline btn-sm f-reset"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 6M4 10V5m0 5h5"/></svg> Ulang</button>
+      <div class="f-progress"><div class="f-bar"></div></div>
+    </div>
+    <ol class="flow-steps"><li class="step"><span class="step-num">1</span><span class="step-tx">Tamu mengisi form registrasi di landing atau halaman register.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">2</span><span class="step-tx">Server mengeksi (validasi) nama, format email, email duplikat, dan panjang password.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">3</span><span class="step-tx">Password di-hash (Bcrypt), akun dibuat sebagai member aktif, flash sukses, redirect ke login.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">4</span><span class="step-tx">Login memverifikasi hash + is_active, regenerasi session id, lalu redirect ke ?next= valid atau dashboard per role.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">5</span><span class="step-tx">Kegagalan kembali ke login dengan ?gagal=1 atau ?nonaktif=1.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li></ol>
+  </div>
+  <figure class="diag"><div class="diag-tools"><button class="chip d-zoom" data-step="1" aria-label="Perbesar"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5M11 8.5v5"/></svg></button><button class="chip d-zoom" data-step="-1" aria-label="Perkecil"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5"/></svg></button><button class="chip d-reset" aria-label="Reset tampilan"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 6M4 10V5m0 5h5"/></svg></button><button class="chip d-full" aria-label="Layar penuh"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div><div class="diag-scroll"><div class="diag-inner"><pre class="mermaid">flowchart TD
+    A[&quot;Tamu isi form registrasi&quot;] --&gt; B{&quot;Validasi: nama, email,&lt;br/&gt;duplikat, panjang password&quot;}
+    B -- &quot;Gagal&quot; --&gt; C[&quot;Redirect ?gagal=email/password/nama&quot;]
+    B -- &quot;Lolos&quot; --&gt; D[&quot;password_hash Bcrypt + INSERT users&lt;br/&gt;role=member, is_active=1&quot;]
+    D --&gt; E[&quot;Flash sukses + redirect login.php&quot;]
+    E --&gt; F{&quot;password_verify + is_active?&quot;}
+    F -- &quot;Salah&quot; --&gt; G[&quot;Redirect ?gagal=1&quot;]
+    F -- &quot;Nonaktif&quot; --&gt; H[&quot;Redirect ?nonaktif=1&quot;]
+    F -- &quot;Sukses&quot; --&gt; I[&quot;session_regenerate_id + simpan user_id&quot;]
+    I --&gt; J{&quot;?next= valid lokal?&quot;}
+    J -- &quot;Ya&quot; --&gt; K[&quot;Redirect ?next=&quot;]
+    J -- &quot;Tidak&quot; --&gt; L[&quot;Dashboard per role&lt;br/&gt;(admin/member)&quot;]</pre></div></div><figcaption class="muted">Diagram mermaid alur BL-01 — bisa di-zoom, digeser, dan layar penuh.</figcaption></figure>
+</section>
+<section class="flow card pad" id="bl-02">
+  <div class="flow-head">
+    <span class="badge">BL-02</span>
+    <h2>Pencarian Katalog</h2>
+    <p class="muted">Modal cari di navbar/topbar mengirim form GET; semua filter diproses server-side dan hasilnya dibagikan lewat URL.</p>
+  </div>
+  <div class="flow-player" data-flow="bl-02">
+    <div class="flow-ctrl">
+      <button class="btn btn-primary btn-sm f-play"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg><span>Putar</span></button>
+      <button class="btn btn-outline btn-sm f-reset"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 6M4 10V5m0 5h5"/></svg> Ulang</button>
+      <div class="f-progress"><div class="f-bar"></div></div>
+    </div>
+    <ol class="flow-steps"><li class="step"><span class="step-num">1</span><span class="step-tx">Pengguna membuka modal cari dari ikon navbar/topbar.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">2</span><span class="step-tx">Form GET mengirim q, kategori, dan sort.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">3</span><span class="step-tx">PHP menyusun WHERE prepared: is_active=1, LIKE judul/penulis, genre exact, ORDER BY.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">4</span><span class="step-tx">Halaman dirender ulang dengan kartu hasil dan badge jumlah.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">5</span><span class="step-tx">Kombinasi filter dipertahankan pada tautan tab/status dan reset filter.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li></ol>
+  </div>
+  <figure class="diag"><div class="diag-tools"><button class="chip d-zoom" data-step="1" aria-label="Perbesar"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5M11 8.5v5"/></svg></button><button class="chip d-zoom" data-step="-1" aria-label="Perkecil"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5"/></svg></button><button class="chip d-reset" aria-label="Reset tampilan"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 6M4 10V5m0 5h5"/></svg></button><button class="chip d-full" aria-label="Layar penuh"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div><div class="diag-scroll"><div class="diag-inner"><pre class="mermaid">flowchart TD
+    A[&quot;Klik ikon cari di navbar/topbar&quot;] --&gt; B[&quot;Modal cari terbuka&quot;]
+    B --&gt; C[&quot;Form GET: q, kategori, sort&quot;]
+    C --&gt; D[&quot;PHP menyusun WHERE prepared&lt;br/&gt;is_active=1 + LIKE judul/penulis + genre exact&quot;]
+    D --&gt; E[&quot;ORDER BY sesuai pilihan sort&quot;]
+    E --&gt; F[&quot;Render kartu hasil + badge jumlah buku&quot;]
+    F --&gt; G[&quot;Filter dipertahankan di URL&lt;br/&gt;(tautan tab/status &amp; reset filter)&quot;]</pre></div></div><figcaption class="muted">Diagram mermaid alur BL-02 — bisa di-zoom, digeser, dan layar penuh.</figcaption></figure>
+</section>
+<section class="flow card pad" id="bl-03">
+  <div class="flow-head">
+    <span class="badge">BL-03</span>
+    <h2>Simpan / Ubah Status</h2>
+    <p class="muted">Dropdown status di kartu buku langsung POST ke collection-save.php dan selalu menandai status_source='user'.</p>
+  </div>
+  <div class="flow-player" data-flow="bl-03">
+    <div class="flow-ctrl">
+      <button class="btn btn-primary btn-sm f-play"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg><span>Putar</span></button>
+      <button class="btn btn-outline btn-sm f-reset"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 6M4 10V5m0 5h5"/></svg> Ulang</button>
+      <div class="f-progress"><div class="f-bar"></div></div>
+    </div>
+    <ol class="flow-steps"><li class="step"><span class="step-num">1</span><span class="step-tx">Pengguna memilih salah satu dari empat status pada dropdown.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">2</span><span class="step-tx">Form POST ke actions/collection-save.php dengan CSRF, book_id, dan status.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">3</span><span class="step-tx">Server memvalidasi status & buku aktif.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">4</span><span class="step-tx">Upsert collections dengan status_source='user'.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">5</span><span class="step-tx">Flash + redirect ke halaman asal (referer lokal) atau katalog.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li></ol>
+  </div>
+  <figure class="diag"><div class="diag-tools"><button class="chip d-zoom" data-step="1" aria-label="Perbesar"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5M11 8.5v5"/></svg></button><button class="chip d-zoom" data-step="-1" aria-label="Perkecil"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5"/></svg></button><button class="chip d-reset" aria-label="Reset tampilan"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 6M4 10V5m0 5h5"/></svg></button><button class="chip d-full" aria-label="Layar penuh"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div><div class="diag-scroll"><div class="diag-inner"><pre class="mermaid">flowchart TD
+    A[&quot;Pilih status di dropdown&lt;br/&gt;(4 nilai: to_read, reading, finished, not_interested)&quot;] --&gt; B[&quot;POST actions/collection-save.php&lt;br/&gt;(csrf, book_id, status)&quot;]
+    B --&gt; C{&quot;Status valid &amp;&lt;br/&gt;buku is_active=1?&quot;}
+    C -- &quot;Tidak&quot; --&gt; D[&quot;Flash &#x27;tidak valid&#x27; + redirect kembali&quot;]
+    C -- &quot;Ya&quot; --&gt; E[&quot;Upsert collections&lt;br/&gt;status_source=&#x27;user&#x27;&quot;]
+    E --&gt; F[&quot;Flash sukses + redirect&lt;br/&gt;referer lokal / katalog&quot;]</pre></div></div><figcaption class="muted">Diagram mermaid alur BL-03 — bisa di-zoom, digeser, dan layar penuh.</figcaption></figure>
+</section>
+<section class="flow card pad" id="bl-04">
+  <div class="flow-head">
+    <span class="badge">BL-04</span>
+    <h2>Membaca & Auto-Selesai</h2>
+    <p class="muted">Reader PDF.js menyimpan halaman terakhir otomatis lewat iframe; sistem mengelola status selama user belum memilih sendiri.</p>
+  </div>
+  <div class="flow-player" data-flow="bl-04">
+    <div class="flow-ctrl">
+      <button class="btn btn-primary btn-sm f-play"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg><span>Putar</span></button>
+      <button class="btn btn-outline btn-sm f-reset"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 6M4 10V5m0 5h5"/></svg> Ulang</button>
+      <div class="f-progress"><div class="f-bar"></div></div>
+    </div>
+    <ol class="flow-steps"><li class="step"><span class="step-num">1</span><span class="step-tx">Pengguna menekan Baca Buku; read.php memuat PDF dari stream.php yang memeriksa sesi.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">2</span><span class="step-tx">PDF.js merender halaman awal pada resolusi DPR.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">3</span><span class="step-tx">Setiap render/pindah halaman mengirim last_page + total_pages ke progress-save.php.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">4</span><span class="step-tx">Jika collections belum ada → buat reading/system; jika system dan halaman terakhir → finished; jika user → status tidak diubah.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">5</span><span class="step-tx">Progres disimpan, halaman tetap terlihat di posisi terakhir saat dibuka lagi.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li></ol>
+  </div>
+  <figure class="diag"><div class="diag-tools"><button class="chip d-zoom" data-step="1" aria-label="Perbesar"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5M11 8.5v5"/></svg></button><button class="chip d-zoom" data-step="-1" aria-label="Perkecil"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5"/></svg></button><button class="chip d-reset" aria-label="Reset tampilan"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 6M4 10V5m0 5h5"/></svg></button><button class="chip d-full" aria-label="Layar penuh"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div><div class="diag-scroll"><div class="diag-inner"><pre class="mermaid">flowchart TD
+    A[&quot;Klik Baca Buku&quot;] --&gt; B[&quot;read.php memuat PDF&lt;br/&gt;dari stream.php (cek sesi)&quot;]
+    B --&gt; C[&quot;PDF.js render halaman awal&lt;br/&gt;pada resolusi DPR&quot;]
+    C --&gt; D[&quot;Tiap render/pindah halaman:&lt;br/&gt;kirim last_page + total_pages&lt;br/&gt;ke progress-save.php&quot;]
+    D --&gt; E{&quot;collections&lt;br/&gt;sudah ada?&quot;}
+    E -- &quot;Belum&quot; --&gt; F[&quot;Buat baris reading&lt;br/&gt;status_source=&#x27;system&#x27;&quot;]
+    E -- &quot;Ada, source=system&quot; --&gt; G{&quot;last_page &gt;=&lt;br/&gt;halaman terakhir?&quot;}
+    G -- &quot;Ya&quot; --&gt; H[&quot;Status otomatis finished&lt;br/&gt;(source tetap system)&quot;]
+    G -- &quot;Tidak&quot; --&gt; I[&quot;Status tetap reading&quot;]
+    E -- &quot;Ada, source=user&quot; --&gt; J[&quot;Status TIDAK diubah&lt;br/&gt;hormati pilihan user&quot;]
+    F --&gt; K[&quot;Upsert reading_progress.last_page&quot;]
+    H --&gt; K
+    I --&gt; K
+    J --&gt; K</pre></div></div><figcaption class="muted">Diagram mermaid alur BL-04 — bisa di-zoom, digeser, dan layar penuh.</figcaption></figure>
+</section>
+<section class="flow card pad" id="bl-05">
+  <div class="flow-head">
+    <span class="badge">BL-05</span>
+    <h2>Baca Ulang</h2>
+    <p class="muted">Reset progres yang disengaja: modal konfirmasi dulu, lalu status dikembalikan ke pengelolaan sistem.</p>
+  </div>
+  <div class="flow-player" data-flow="bl-05">
+    <div class="flow-ctrl">
+      <button class="btn btn-primary btn-sm f-play"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg><span>Putar</span></button>
+      <button class="btn btn-outline btn-sm f-reset"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 6M4 10V5m0 5h5"/></svg> Ulang</button>
+      <div class="f-progress"><div class="f-bar"></div></div>
+    </div>
+    <ol class="flow-steps"><li class="step"><span class="step-num">1</span><span class="step-tx">Pada kartu selesai / detail buku berstatus finished, tombol Baca Ulang memunculkan modal konfirmasi.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">2</span><span class="step-tx">Batal / Esc / klik luar membatalkan tanpa perubahan.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">3</span><span class="step-tx">Setuju mengirim POST ke actions/progress-reset.php.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">4</span><span class="step-tx">Server menetapkan last_page=1, status reading, status_source='system'.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">5</span><span class="step-tx">Pengguna diarahkan ke reader dengan progres segar.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li></ol>
+  </div>
+  <figure class="diag"><div class="diag-tools"><button class="chip d-zoom" data-step="1" aria-label="Perbesar"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5M11 8.5v5"/></svg></button><button class="chip d-zoom" data-step="-1" aria-label="Perkecil"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5"/></svg></button><button class="chip d-reset" aria-label="Reset tampilan"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 6M4 10V5m0 5h5"/></svg></button><button class="chip d-full" aria-label="Layar penuh"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div><div class="diag-scroll"><div class="diag-inner"><pre class="mermaid">flowchart TD
+    A[&quot;Tombol Baca Ulang&lt;br/&gt;(kartu selesai / detail)&quot;] --&gt; B[&quot;Modal konfirmasi muncul&quot;]
+    B -- &quot;Batal / Esc / klik luar&quot; --&gt; C[&quot;Tidak ada perubahan&quot;]
+    B -- &quot;Setuju&quot; --&gt; D[&quot;POST actions/progress-reset.php&quot;]
+    D --&gt; E[&quot;last_page=1 · status reading&lt;br/&gt;status_source=&#x27;system&#x27;&quot;]
+    E --&gt; F[&quot;Redirect ke reader&lt;br/&gt;progres segar&quot;]</pre></div></div><figcaption class="muted">Diagram mermaid alur BL-05 — bisa di-zoom, digeser, dan layar penuh.</figcaption></figure>
+</section>
+<section class="flow card pad" id="bl-06">
+  <div class="flow-head">
+    <span class="badge">BL-06</span>
+    <h2>Kelola Buku (Admin)</h2>
+    <p class="muted">Tambah/edit buku lewat modal: validasi master, ISBN unik, upload PDF 50 MB, sampul GD otomatis, tanpa hapus keras.</p>
+  </div>
+  <div class="flow-player" data-flow="bl-06">
+    <div class="flow-ctrl">
+      <button class="btn btn-primary btn-sm f-play"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg><span>Putar</span></button>
+      <button class="btn btn-outline btn-sm f-reset"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 6M4 10V5m0 5h5"/></svg> Ulang</button>
+      <div class="f-progress"><div class="f-bar"></div></div>
+    </div>
+    <ol class="flow-steps"><li class="step"><span class="step-num">1</span><span class="step-tx">Admin membuka modal Tambah/Edit dari daftar.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">2</span><span class="step-tx">Form mengirim judul, penulis, publisher, genre, tahun, ISBN, sinopsis, PDF, sampul.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">3</span><span class="step-tx">Server memvalidasi master, ISBN unik, dan berkas.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">4</span><span class="step-tx">PDF baru masuk nama sementara → INSERT → rename ke {id}.pdf → sampul GD bila kosong.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">5</span><span class="step-tx">Kegagalan upload menghapus baris/berkas yatim, flash error, modal tetap terbuka.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">6</span><span class="step-tx">Menonaktifkan buku cukup mengubah is_active, koleksi & progres pengguna tetap utuh.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li></ol>
+  </div>
+  <figure class="diag"><div class="diag-tools"><button class="chip d-zoom" data-step="1" aria-label="Perbesar"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5M11 8.5v5"/></svg></button><button class="chip d-zoom" data-step="-1" aria-label="Perkecil"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5"/></svg></button><button class="chip d-reset" aria-label="Reset tampilan"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 6M4 10V5m0 5h5"/></svg></button><button class="chip d-full" aria-label="Layar penuh"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div><div class="diag-scroll"><div class="diag-inner"><pre class="mermaid">flowchart TD
+    A[&quot;Modal Tambah/Edit buku&quot;] --&gt; B[&quot;Form: judul, penulis, publisher,&lt;br/&gt;genre, tahun, ISBN, sinopsis, PDF, sampul&quot;]
+    B --&gt; C{&quot;Validasi master, ISBN unik,&lt;br/&gt;berkas PDF (ekstensi+MIME, ≤50MB)?&quot;}
+    C -- &quot;Gagal&quot; --&gt; D[&quot;Flash error · modal tetap terbuka&lt;br/&gt;berkas/baris yatim dihapus&quot;]
+    C -- &quot;Lolos&quot; --&gt; E[&quot;Simpan PDF nama sementara&quot;]
+    E --&gt; F[&quot;INSERT books&quot;]
+    F --&gt; G[&quot;Rename ke {id}.pdf&quot;]
+    G --&gt; H{&quot;Sampul kustom diupload?&quot;}
+    H -- &quot;Tidak&quot; --&gt; I[&quot;Sampul GD otomatis&lt;br/&gt;{id}-default.jpg&quot;]
+    H -- &quot;Ya&quot; --&gt; J[&quot;Simpan {id}.jpg&lt;br/&gt;(validasi getimagesize, ≤5MB)&quot;]
+    I --&gt; K[&quot;Selesai · nonaktif = is_active=0&lt;br/&gt;koleksi &amp; progres tetap utuh&quot;]
+    J --&gt; K</pre></div></div><figcaption class="muted">Diagram mermaid alur BL-06 — bisa di-zoom, digeser, dan layar penuh.</figcaption></figure>
+</section>
+<section class="flow card pad" id="bl-07">
+  <div class="flow-head">
+    <span class="badge">BL-07</span>
+    <h2>Kelola Pengguna (Admin)</h2>
+    <p class="muted">Modal tambah/edit akun dengan guard diri sendiri & admin terakhir, plus reset password acak sekali-tampil.</p>
+  </div>
+  <div class="flow-player" data-flow="bl-07">
+    <div class="flow-ctrl">
+      <button class="btn btn-primary btn-sm f-play"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg><span>Putar</span></button>
+      <button class="btn btn-outline btn-sm f-reset"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 6M4 10V5m0 5h5"/></svg> Ulang</button>
+      <div class="f-progress"><div class="f-bar"></div></div>
+    </div>
+    <ol class="flow-steps"><li class="step"><span class="step-num">1</span><span class="step-tx">Admin membuka modal Tambah/Edit.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">2</span><span class="step-tx">Validasi nama, email unik, role, status, dan password awal untuk akun baru.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">3</span><span class="step-tx">Guard diri sendiri & admin terakhir diterapkan sebelum UPDATE.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">4</span><span class="step-tx">Tombol Reset Password menghasilkan password acak 12 karakter, menyimpan hash, menampilkan teks sekali.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">5</span><span class="step-tx">Redirect ke halaman dengan modal terbuka + flash.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li></ol>
+  </div>
+  <figure class="diag"><div class="diag-tools"><button class="chip d-zoom" data-step="1" aria-label="Perbesar"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5M11 8.5v5"/></svg></button><button class="chip d-zoom" data-step="-1" aria-label="Perkecil"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5"/></svg></button><button class="chip d-reset" aria-label="Reset tampilan"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 6M4 10V5m0 5h5"/></svg></button><button class="chip d-full" aria-label="Layar penuh"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div><div class="diag-scroll"><div class="diag-inner"><pre class="mermaid">flowchart TD
+    A[&quot;Modal Tambah/Edit pengguna&quot;] --&gt; B{&quot;Validasi nama, email unik,&lt;br/&gt;role, status, password awal?&quot;}
+    B -- &quot;Gagal&quot; --&gt; C[&quot;Flash error&quot;]
+    B -- &quot;Lolos&quot; --&gt; D{&quot;Guard: menonaktifkan diri sendiri&lt;br/&gt;atau admin aktif terakhir?&quot;}
+    D -- &quot;Ya&quot; --&gt; E[&quot;Tolak + flash error&quot;]
+    D -- &quot;Tidak&quot; --&gt; F[&quot;UPDATE users&quot;]
+    F --&gt; G{&quot;Reset Password?&quot;}
+    G -- &quot;Ya&quot; --&gt; H[&quot;Password acak 12 karakter → hash&lt;br/&gt;teks polos tampil SEKALI + tombol Salin&quot;]
+    G -- &quot;Tidak&quot; --&gt; I[&quot;Selesai&quot;]
+    H --&gt; J[&quot;Redirect + modal terbuka + flash&quot;]
+    I --&gt; J</pre></div></div><figcaption class="muted">Diagram mermaid alur BL-07 — bisa di-zoom, digeser, dan layar penuh.</figcaption></figure>
+</section>
+<section class="flow card pad" id="bl-08">
+  <div class="flow-head">
+    <span class="badge">BL-08</span>
+    <h2>Rak Saya: Cari, Filter, Urut</h2>
+    <p class="muted">Toolbar Rak Saya sepenuhnya server-side: query selalu dibatasi user_id sesi, sort progres dihitung dari persentase turunan.</p>
+  </div>
+  <div class="flow-player" data-flow="bl-08">
+    <div class="flow-ctrl">
+      <button class="btn btn-primary btn-sm f-play"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg><span>Putar</span></button>
+      <button class="btn btn-outline btn-sm f-reset"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 6M4 10V5m0 5h5"/></svg> Ulang</button>
+      <div class="f-progress"><div class="f-bar"></div></div>
+    </div>
+    <ol class="flow-steps"><li class="step"><span class="step-num">1</span><span class="step-tx">Form toolbar dan modal filter mengirim q, status, sort, kategori[].</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">2</span><span class="step-tx">Query SQL menggabungkan WHERE c.user_id = ? dengan filter prepared.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">3</span><span class="step-tx">Sort A–Z/terbaru di SQL; sort progres dihitung dari persentase turunan.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">4</span><span class="step-tx">Tab status mempertahankan filter; empty state menawarkan reset pencarian.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">5</span><span class="step-tx">Modal filter tetap bisa discroll di layar kecil.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li></ol>
+  </div>
+  <figure class="diag"><div class="diag-tools"><button class="chip d-zoom" data-step="1" aria-label="Perbesar"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5M11 8.5v5"/></svg></button><button class="chip d-zoom" data-step="-1" aria-label="Perkecil"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5"/></svg></button><button class="chip d-reset" aria-label="Reset tampilan"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 6M4 10V5m0 5h5"/></svg></button><button class="chip d-full" aria-label="Layar penuh"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div><div class="diag-scroll"><div class="diag-inner"><pre class="mermaid">flowchart TD
+    A[&quot;Toolbar/modal filter:&lt;br/&gt;q · status · sort · kategori[]&quot;] --&gt; B[&quot;Query prepared:&lt;br/&gt;WHERE c.user_id = ?&quot;]
+    B --&gt; C[&quot;+ filter status / LIKE judul-penulis /&lt;br/&gt;genre_name IN (...?)&quot;]
+    C --&gt; D{&quot;Pilihan sort?&quot;}
+    D -- &quot;A-Z&quot; --&gt; E[&quot;ORDER BY v.title ASC&quot;]
+    D -- &quot;Terbaru&quot; --&gt; F[&quot;ORDER BY c.created_at DESC&quot;]
+    D -- &quot;Progres&quot; --&gt; G[&quot;usort dari persen turunan&lt;br/&gt;round(last_page/page_count*100)&quot;]
+    E --&gt; H[&quot;Kartu rak + CTA sesuai status&lt;br/&gt;(Lanjut Baca / Baca Buku / Baca Ulang)&quot;]
+    F --&gt; H
+    G --&gt; H</pre></div></div><figcaption class="muted">Diagram mermaid alur BL-08 — bisa di-zoom, digeser, dan layar penuh.</figcaption></figure>
+</section>
+<section class="flow card pad" id="bl-09">
+  <div class="flow-head">
+    <span class="badge">BL-09</span>
+    <h2>Landing & Navigasi</h2>
+    <p class="muted">Landing tamu punya dua pintu masuk; begitu login, seluruh aplikasi memakai shell sidebar yang sama.</p>
+  </div>
+  <div class="flow-player" data-flow="bl-09">
+    <div class="flow-ctrl">
+      <button class="btn btn-primary btn-sm f-play"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg><span>Putar</span></button>
+      <button class="btn btn-outline btn-sm f-reset"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 6M4 10V5m0 5h5"/></svg> Ulang</button>
+      <div class="f-progress"><div class="f-bar"></div></div>
+    </div>
+    <ol class="flow-steps"><li class="step"><span class="step-num">1</span><span class="step-tx">Tamu melihat judul/pencarian, form registrasi, dan 3 buku pada grid 3 kolom.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">2</span><span class="step-tx">User login yang membuka landing langsung diarahkan ke katalog.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">3</span><span class="step-tx">Setelah login, katalog/detail/penulis/penerbit/reader/rak/profil/dashboard/admin memakai sidebar yang sama.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="step"><span class="step-num">4</span><span class="step-tx">Footer landing baru muncul setelah scroll; konten utama muat di 1366×768.</span><span class="step-ok"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li></ol>
+  </div>
+  <figure class="diag"><div class="diag-tools"><button class="chip d-zoom" data-step="1" aria-label="Perbesar"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5M11 8.5v5"/></svg></button><button class="chip d-zoom" data-step="-1" aria-label="Perkecil"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5"/></svg></button><button class="chip d-reset" aria-label="Reset tampilan"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 6M4 10V5m0 5h5"/></svg></button><button class="chip d-full" aria-label="Layar penuh"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div><div class="diag-scroll"><div class="diag-inner"><pre class="mermaid">flowchart TD
+    A[&quot;Landing (tamu): judul, pencarian,&lt;br/&gt;form registrasi, 3 buku grid 3 kolom&quot;] --&gt; B{&quot;Sudah login?&quot;}
+    B -- &quot;Ya&quot; --&gt; C[&quot;Redirect ke katalog&quot;]
+    B -- &quot;Tidak&quot; --&gt; D[&quot;Cari → catalog.php?q=&lt;br/&gt;atau daftar → register.php&quot;]
+    C --&gt; E[&quot;Shell sidebar + topbar sama&lt;br/&gt;untuk semua halaman ber-login&quot;]
+    D --&gt; E</pre></div></div><figcaption class="muted">Diagram mermaid alur BL-09 — bisa di-zoom, digeser, dan layar penuh.</figcaption></figure>
+</section>
+</main>
+<footer class="foot">
+  <div class="wrap foot-in">
+    <p><b>Dokumentasi PustakaDigital</b> — Perpustakaan Digital Baca Online. Situs dokumentasi bisnis (alur, aturan, basis data, live coding), bukan kode aplikasi.</p>
+    <p>Repo aplikasi: <code>0Zeroiszero/Perpustakaan-berbasis-web</code> · Repo dokumentasi: <code>0Zeroiszero/dokumentasi_perpustakaan_digital_berbasis_web</code> · Branch aplikasi <code>optl/rombak-total</code> · Database <code>optl_pustaka</code></p>
+  </div>
+</footer>
+<button class="to-top" id="toTop" aria-label="Kembali ke atas"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7M12 5v14"/></svg></button>
+<script src="assets/vendor/mermaid.min.js"></script>
+<script src="assets/vendor/highlight.min.js"></script>
+<script src="assets/app.js"></script>
+
+</body>
+</html>
