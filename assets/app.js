@@ -16,17 +16,21 @@
     });
   }
 
-  /* ---------- tombol ke atas ---------- */
+  /* ---------- tombol ke atas + bayangan topbar ---------- */
   var toTop = document.getElementById("toTop");
-  if (toTop) {
+  var topbar = document.querySelector(".topbar");
+  if (toTop || topbar) {
     var onScroll = function () {
-      toTop.classList.toggle("show", window.scrollY > 600);
+      if (toTop) toTop.classList.toggle("show", window.scrollY > 600);
+      if (topbar) topbar.classList.toggle("scrolled", window.scrollY > 8);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
-    toTop.addEventListener("click", function () {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
+    if (toTop) {
+      toTop.addEventListener("click", function () {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    }
   }
 
   /* ---------- syntax highlight ---------- */
@@ -81,22 +85,26 @@
     });
   });
 
-  /* ---------- galeri: filter kelompok ---------- */
+  /* ---------- galeri: filter kelompok (per section) ---------- */
   var gchips = document.querySelectorAll(".gchip");
-  if (gchips.length) {
+  var gsecs = document.querySelectorAll(".gsec");
+  if (gchips.length && gsecs.length) {
+    var terapkanFilter = function (g) {
+      gsecs.forEach(function (sec) {
+        sec.hidden = !(g === "Semua" || sec.dataset.g === g);
+      });
+    };
     gchips.forEach(function (c) {
       c.addEventListener("click", function () {
         gchips.forEach(function (x) { x.classList.remove("active"); });
         c.classList.add("active");
-        var g = c.dataset.g;
-        document.querySelectorAll(".shot").forEach(function (fig) {
-          fig.classList.toggle("show", g === "Semua" || fig.dataset.g === g);
-        });
+        terapkanFilter(c.dataset.g);
       });
     });
-    document.querySelectorAll(".shot").forEach(function (fig) {
-      fig.classList.add("show");
-    });
+    window.__resetGaleri = function () {
+      var semua = document.querySelector('.gchip[data-g="Semua"]');
+      if (semua) semua.click();
+    };
   }
 
   /* ---------- lightbox screenshot ---------- */
@@ -166,6 +174,93 @@
       });
     });
   });
+
+  /* ---------- TOC slider "Di halaman ini" (shadcn table-of-contents) ---------- */
+  (function () {
+    var toc = document.getElementById("toc");
+    if (!toc) return;
+    var tab = document.getElementById("tocTab");
+    var panel = document.getElementById("tocPanel");
+    var closeBtn = toc.querySelector(".toc-close");
+    var links = Array.prototype.slice.call(toc.querySelectorAll("[data-toc-link]"));
+    var buka = function (fokusPertama) {
+      toc.classList.add("open");
+      tab.setAttribute("aria-expanded", "true");
+      panel.hidden = false;
+      if (fokusPertama) {
+        var first = toc.querySelector(".toc-link");
+        if (first) first.focus();
+      }
+    };
+    var tutup = function (kembaliFokus) {
+      toc.classList.remove("open");
+      tab.setAttribute("aria-expanded", "false");
+      if (kembaliFokus) tab.focus();
+    };
+    tab.addEventListener("click", function () {
+      if (toc.classList.contains("open")) tutup(true); else buka(false);
+    });
+    if (closeBtn) closeBtn.addEventListener("click", function () { tutup(true); });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && toc.classList.contains("open")) tutup(true);
+    });
+    document.addEventListener("click", function (e) {
+      if (!toc.classList.contains("open")) return;
+      if (window.innerWidth >= 1024) return;             // desktop: biarkan terbuka
+      if (!toc.contains(e.target)) tutup(false);
+    });
+
+    // slider muncul setelah pengguna mulai menggulir
+    var tampil = function () {
+      var lewat = window.scrollY > 140;
+      toc.classList.toggle("show", lewat);
+      if (lewat && window.innerWidth >= 1024 && !toc.dataset.autopen) {
+        toc.dataset.autopen = "1";
+        buka(false);
+      }
+    };
+    window.addEventListener("scroll", tampil, { passive: true });
+    tampil();
+
+    // klik butir: lompat mulus + tutup drawer di layar kecil + reset filter galeri
+    links.forEach(function (a) {
+      a.addEventListener("click", function (e) {
+        var target = document.getElementById(a.dataset.target);
+        if (!target) return;
+        e.preventDefault();
+        if (window.__resetGaleri) window.__resetGaleri();
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        history.replaceState(null, "", "#" + a.dataset.target);
+        tandaiAktif(a.dataset.target);
+        if (window.innerWidth < 1024) tutup(false);
+      });
+    });
+
+    // scroll-spy: butir aktif mengikuti bagian yang sedang dilihat
+    var tandaiAktif = function (id) {
+      links.forEach(function (a) {
+        var aktif = a.dataset.target === id;
+        a.classList.toggle("active", aktif);
+        if (aktif) a.setAttribute("aria-current", "true");
+        else a.removeAttribute("aria-current");
+        if (aktif && window.innerWidth >= 1024) {
+          a.scrollIntoView({ block: "nearest" });
+        }
+      });
+    };
+    var ids = links.map(function (a) { return a.dataset.target; })
+                   .filter(function (id) { return document.getElementById(id); });
+    if ("IntersectionObserver" in window && ids.length) {
+      var aktifSekarang = ids[0];
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) aktifSekarang = en.target.id;
+        });
+        tandaiAktif(aktifSekarang);
+      }, { rootMargin: "-30% 0px -60% 0px", threshold: 0 });
+      ids.forEach(function (id) { io.observe(document.getElementById(id)); });
+    }
+  })();
 
   /* ---------- mermaid + zoom/pan + layar penuh ---------- */
   function siapMermaid() {

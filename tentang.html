@@ -24,19 +24,19 @@
 </header>
 <main id="main" class="wrap">
 <nav class="crumbs" aria-label="Posisi"><a href="index.html">Beranda</a><span class="sep">/</span><span>Tentang</span></nav><header class="page-head"><h1>Tentang PustakaDigital</h1><p class="lead">Proyek kelompok kuliah: perpustakaan digital baca online berbasis web. Halaman ini merangkum README resmi repo <code>0Zeroiszero/Perpustakaan-berbasis-web</code> — latar belakang, tujuan, fitur, teknologi, dan struktur folder — supaya dokumentasi bisnis dan konteks proyek ada di satu tempat.</p></header>
-<section class="sec cols-2">
+<section class="sec cols-2" id="latar">
   <div class="card pad"><h3>Latar Belakang</h3><ul class="plain"><li>Perkembangan teknologi mendorong layanan perpustakaan beralih ke bentuk digital.</li><li>Perpustakaan konvensional terbatas oleh jam buka, lokasi, dan jumlah salinan buku cetak, sehingga koleksi tidak selalu bisa diakses kapan saja.</li><li>Proses peminjaman dan pengembalian buku fisik menambah langkah manual bagi pengguna maupun pengelola.</li><li>Pengguna membutuhkan bacaan yang cepat dicari dan bisa dilanjutkan kapan saja langsung dari browser.</li><li>Karena itu PustakaDigital dikembangkan sepenuhnya sebagai perpustakaan digital: koleksinya e-book, tanpa koleksi fisik, peminjaman, maupun pengembalian buku cetak.</li><li>Sistem menyediakan katalog, pencarian, detail buku, rak pribadi, serta dashboard user dan admin untuk mendukung pengelolaan koleksi.</li></ul></div>
-  <div class="card pad"><h3>Tujuan</h3><ul class="plain"><li>Menyediakan akses koleksi e-book kapan saja, tanpa terikat jam buka atau kunjungan fisik.</li><li>Mempermudah pengguna menemukan buku melalui pencarian judul/penulis dan filter kategori.</li><li>Mempermudah pengguna menyimpan buku ke rak pribadi serta melanjutkan bacaan dari halaman terakhir.</li><li>Mempermudah admin mengelola data buku, penerbit, penulis, dan status akun dalam satu tempat.</li><li>Menghilangkan proses manual khas perpustakaan fisik, seperti peminjaman, pengembalian, dan denda, karena seluruh koleksinya digital.</li><li>Menyediakan sistem perpustakaan yang cepat, praktis, dan terstruktur.</li></ul></div>
+  <div class="card pad" id="tujuan"><h3>Tujuan</h3><ul class="plain"><li>Menyediakan akses koleksi e-book kapan saja, tanpa terikat jam buka atau kunjungan fisik.</li><li>Mempermudah pengguna menemukan buku melalui pencarian judul/penulis dan filter kategori.</li><li>Mempermudah pengguna menyimpan buku ke rak pribadi serta melanjutkan bacaan dari halaman terakhir.</li><li>Mempermudah admin mengelola data buku, penerbit, penulis, dan status akun dalam satu tempat.</li><li>Menghilangkan proses manual khas perpustakaan fisik, seperti peminjaman, pengembalian, dan denda, karena seluruh koleksinya digital.</li><li>Menyediakan sistem perpustakaan yang cepat, praktis, dan terstruktur.</li></ul></div>
 </section>
-<section class="sec">
+<section class="sec" id="fitur">
   <h2>Fitur Utama</h2>
   <div class="grid-2"><div class="card pad fit"><h3>Beranda (Landing)</h3><p>Halaman tamu sebagai pintu masuk: tiga sampul koleksi terbaru pada grid 3 kolom dan form registrasi singkat di sampingnya. Pencarian langsung ke catalog.php?q=…, footer muncul setelah scroll, dan user yang sudah login diarahkan langsung ke katalog.</p></div><div class="card pad fit"><h3>Katalog Buku</h3><p>Pencarian judul/penulis, filter kategori, dan urutan diproses server-side PHP (form GET + tombol Terapkan). Modal cari dari navbar/topbar, pil genre dari database, hasil dibagikan lewat URL. Kartu buku berisi judul, penulis, kategori, dan dropdown status rak.</p></div><div class="card pad fit"><h3>Detail Buku & Profil</h3><p>Sampul, judul, penulis (tautan profil), sinopsis, kategori, penerbit (nama + kota, tautan profil penerbit), tahun, halaman, ISBN, format PDF. Dropdown status langsung menyimpan; Baca Buku membuka reader, dan buku selesai menampilkan Baca Ulang dengan konfirmasi.</p></div><div class="card pad fit"><h3>Pembaca PDF Inline</h3><p>PDF.js merender buku langsung di browser (read.php?slug=…). Toolbar: kembali, prev/next, input halaman, Fit Halaman / Fit Lebar. Kanvas mengikuti devicePixelRatio agar tetap tajam di layar HP/Retina. Progres last_page tersimpan otomatis via iframe tanpa reload.</p></div><div class="card pad fit"><h3>Rak Saya</h3><p>Tab empat status bacaan server-side; simpan buku dari katalog/detail/profil. Pencarian, filter kategori, status, dan urutan (Terbaru, A–Z, Progres) semuanya server-side. Baca Ulang berkonfirmasi; hapus buku dari rak dengan konfirmasi; empty state mengarah ke katalog.</p></div><div class="card pad fit"><h3>Akun & Profil</h3><p>Registrasi terbuka, login email + password (hash Bcrypt), logout yang benar. Profil mandiri untuk ubah nama tampilan, email, dan kata sandi. Akun yang dinonaktifkan admin ditolak saat login dengan pesan jelas.</p></div><div class="card pad fit"><h3>Dashboard User</h3><p>Ringkasan aktivitas membaca: jumlah rak, sedang dibaca, selesai dibaca, total koleksi, daftar sedang dibaca, dan aktivitas terbaru — seluruhnya dihitung langsung dari tabel (tanpa data dummy).</p></div><div class="card pad fit"><h3>Dashboard Admin</h3><p>Statistik buku/pengguna/penerbit/penulis dan buku terbaru. Kelola Buku dengan upload PDF + sampul GD otomatis, Kelola Pengguna dengan reset password acak sekali-tampil, Kelola Publisher dan Penulis via modal, semuanya pencarian server-side.</p></div><div class="card pad fit"><h3>Hak Akses</h3><p>Publik: beranda, katalog, detail, profil penulis/penerbit, login, register. Wajib login: rak, reader, streaming, profil, dashboard user. Wajib admin: dashboard admin dan admin/*. Semua aksi tulis memakai POST + CSRF + redirect + flash.</p></div></div>
 </section>
-<section class="sec">
+<section class="sec" id="teknologi">
   <h2>Teknologi</h2>
   <div class="table-wrap"><table><thead><tr><th>Teknologi</th><th>Peran di proyek</th></tr></thead><tbody><tr><td><b>PHP 8.4+ native</b></td><td>Semua halaman dan aksi berupa PHP polos tanpa framework; koneksi MySQL memakai mysqli prepared statements (keputusan tim: bukan PDO).</td></tr><tr><td><b>MySQL 9.x — optl_pustaka</b></td><td>Tujuh tabel 3NF + satu VIEW; dump siap impor di database/for_demo_optl_pustaka.sql (dan optl_pustaka.sql untuk seed lengkap).</td></tr><tr><td><b>Session PHP</b></td><td>Login/logout pakai session cookie httponly + SameSite Lax; password_hash / password_verify Bcrypt.</td></tr><tr><td><b>Bootstrap 5.3 + Icons (CDN)</b></td><td>Shell UI: sidebar, topbar, modal, dropdown; label seluruhnya Indonesia.</td></tr><tr><td><b>PDF.js 3.11.174 (CDN)</b></td><td>Pembaca inline read.php; render pada devicePixelRatio (maks 2.5); transport internal memakai XHR ke stream.php.</td></tr><tr><td><b>PHP GD</b></td><td>Sampul otomatis {book_id}-default.jpg 600×800 untuk buku tanpa sampul kustom; font Inter dibundel agar jalan di semua laptop.</td></tr><tr><td><b>HTML/CSS/JS vanilla</b></td><td>Tanpa build step, tanpa AJAX untuk data (auto-save progres pakai iframe). Token warna di root.css; teruji sampai 320px.</td></tr></tbody></table></div>
 </section>
-<section class="sec">
+<section class="sec" id="struktur">
   <h2>Struktur Folder</h2>
   <p class="lead">Hasil rombak total <code>optl/rombak-total</code>: <code>public/</code> sebagai DocumentRoot efektif,
   berkas PDF dan kode rahasia di luar <code>public/</code>.</p>
@@ -62,7 +62,7 @@
 │                specs/SPEC-DB.md … SPEC-10.md · screenshots/ (33 tangkapan layar)
 └── tests/       smoke.php (uji menyeluruh) · viewport.py (uji tampilan 320–1366px)</code></pre></div>
 </section>
-<section class="sec">
+<section class="sec" id="keputusan">
   <h2>Keputusan Teknis Mengikat</h2>
   <p class="lead">Disepakati saat perencanaan rombak total (RENCANA-ROMBAK-TOTAL, berlaku menyingkirkan PDF jika disebut).</p>
   <ul class="rule-list dec"><li><b>mysqli prepared statements, bukan PDO</b><p>Tim belum belajar PDO; pola helper lama q()/rows()/row()/scalar()/e() dipertahankan di semua halaman.</p></li><li><b>Tanpa ketergantungan .htaccess</b><p>Tim belum belajar mod_rewrite; slug tetap identitas publik lewat query string (book-detail.php?slug=…). Tidak ada file .htaccess sama sekali.</p></li><li><b>URL migrasi penuh tanpa redirect</b><p>Belum produksi, jadi tidak perlu kompatibilitas URL lama.</p></li><li><b>Nama database optl_pustaka</b><p>Branch optl/rombak-total; dump ramah phpMyAdmin dengan seed data demo.</p></li><li><b>Soft-delete, bukan hapus keras</b><p>Buku/akun dinonaktifkan lewat is_active; hapus keras hanya untuk item rak; master tidak dihapus sama sekali.</p></li><li><b>PDF-saja + PDF.js</b><p>Satu judul satu berkas; format lain dikonversi manual di luar sistem; MODUL VII bukan rujukan.</p></li><li><b>Smoke test menyeluruh</b><p>tests/smoke.php menguji 'semua yang possible', bukan sampel; viewport.py menguji tampilan 320–1366px.</p></li><li><b>Layout public/ sebagai DocumentRoot</b><p>storage/ dan includes/ berada di luar public sehingga tidak punya URL publik.</p></li></ul>
@@ -75,6 +75,21 @@
   </div>
 </footer>
 <button class="to-top" id="toTop" aria-label="Kembali ke atas"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7M12 5v14"/></svg></button>
+
+<div class="toc" id="toc">
+  <button class="toc-tab" id="tocTab" aria-expanded="false" aria-controls="tocPanel" aria-haspopup="true">
+    <span class="toc-tab-ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h6v6H4zM14 14h6v6h-6zM7 10v4a2 2 0 0 0 2 2h5M17 14v-4a2 2 0 0 0-2-2h-5"/></svg></span>
+    <span class="toc-tab-tx">Di halaman ini</span>
+    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+  </button>
+  <nav class="toc-panel" id="tocPanel" aria-label="Daftar isi halaman" hidden>
+    <div class="toc-head">
+      <span>Di halaman ini</span>
+      <button class="icon-btn toc-close" aria-label="Tutup daftar isi"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div class="toc-list"><a class="toc-link" href="#latar" data-toc-link data-target="latar">Latar Belakang &amp; Tujuan</a><a class="toc-link" href="#fitur" data-toc-link data-target="fitur">Fitur Utama</a><a class="toc-link" href="#teknologi" data-toc-link data-target="teknologi">Teknologi</a><a class="toc-link" href="#struktur" data-toc-link data-target="struktur">Struktur Folder</a><a class="toc-link" href="#keputusan" data-toc-link data-target="keputusan">Keputusan Teknis Mengikat</a></div>
+  </nav>
+</div>
 <script src="assets/vendor/mermaid.min.js"></script>
 <script src="assets/vendor/highlight.min.js"></script>
 <script src="assets/app.js"></script>

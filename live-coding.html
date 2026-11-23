@@ -24,7 +24,7 @@
 </header>
 <main id="main" class="wrap">
 <nav class="crumbs" aria-label="Posisi"><a href="index.html">Beranda</a><span class="sep">/</span><span>Live Coding</span></nav><header class="page-head"><h1>Live Coding Asdos — HTML + PHP + sedikit JS (tanpa CSS)</h1><p class="lead">Delapan latihan yang bias muncul saat live coding, ditulis sesederhana mungkin agar fokus ke <b>pemahaman</b>: pola prepared statement, hash, upsert, lifecycle status, dan guard. Semua snippet sengaja <b>tanpa CSS</b>. Setiap kartu punya tab <b>Kode</b> dan <b>Expected Output</b> — output yang mungkin keluar di browser ditampilkan apa adanya di dalam frame. Jalankan lokal: impor dump, lalu <code>php -S localhost:8000</code> di folder snippet, login pakai akun demo.</p></header>
-<section class="card pad">
+<section class="card pad" id="pola-helper">
   <h2>Pola helper aplikasi asli</h2>
   <p>Snippet di bawah menulis <code>mysqli</code> polos supaya terlihat. Aplikasi asli membungkusnya dalam
   helper di <code>includes/db.php</code> dan <code>includes/auth_guard.php</code> — ini yang perlu kamu
@@ -493,6 +493,21 @@ echo &#x27;Sesi diakhiri. Kembali ke beranda.&#x27;;
   </div>
 </footer>
 <button class="to-top" id="toTop" aria-label="Kembali ke atas"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7M12 5v14"/></svg></button>
+
+<div class="toc" id="toc">
+  <button class="toc-tab" id="tocTab" aria-expanded="false" aria-controls="tocPanel" aria-haspopup="true">
+    <span class="toc-tab-ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h6v6H4zM14 14h6v6h-6zM7 10v4a2 2 0 0 0 2 2h5M17 14v-4a2 2 0 0 0-2-2h-5"/></svg></span>
+    <span class="toc-tab-tx">Di halaman ini</span>
+    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+  </button>
+  <nav class="toc-panel" id="tocPanel" aria-label="Daftar isi halaman" hidden>
+    <div class="toc-head">
+      <span>Di halaman ini</span>
+      <button class="icon-btn toc-close" aria-label="Tutup daftar isi"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div class="toc-list"><a class="toc-link" href="#pola-helper" data-toc-link data-target="pola-helper">Pola helper aplikasi asli</a><a class="toc-link" href="#sn-registrasi" data-toc-link data-target="sn-registrasi">Snippet 1 · Registrasi akun member</a><a class="toc-link" href="#sn-login" data-toc-link data-target="sn-login">Snippet 2 · Login dengan password_verify + is_active</a><a class="toc-link" href="#sn-katalog" data-toc-link data-target="sn-katalog">Snippet 3 · Ambil data katalog (pencarian server-side)</a><a class="toc-link" href="#sn-rak" data-toc-link data-target="sn-rak">Snippet 4 · Simpan status Rak Saya (dropdown + upsert)</a><a class="toc-link" href="#sn-progres" data-toc-link data-target="sn-progres">Snippet 5 · Auto-save progres baca (iframe, bukan AJAX)</a><a class="toc-link" href="#sn-reset" data-toc-link data-target="sn-reset">Snippet 6 · Baca Ulang — reset progres</a><a class="toc-link" href="#sn-stream" data-toc-link data-target="sn-stream">Snippet 7 · Streaming PDF aman (guard sesi + path)</a><a class="toc-link" href="#sn-logout" data-toc-link data-target="sn-logout">Snippet 8 · Logout yang benar</a></div>
+  </nav>
+</div>
 <script src="assets/vendor/mermaid.min.js"></script>
 <script src="assets/vendor/highlight.min.js"></script>
 <script src="assets/app.js"></script>

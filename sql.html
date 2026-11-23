@@ -24,7 +24,7 @@
 </header>
 <main id="main" class="wrap">
 <nav class="crumbs" aria-label="Posisi"><a href="index.html">Beranda</a><span class="sep">/</span><span>Query SQL</span></nav><header class="page-head"><h1>Query SQL yang Dipakai Aplikasi</h1><p class="lead">Seluruh query di halaman ini disalin langsung dari kode aplikasi dan dump <code>for_demo_optl_pustaka.sql</code> — bukan rekaan. Semuanya lewat prepared statement, sesuai BR-02.4. Impor dump lewat phpMyAdmin atau <code>mysql -uroot &lt; database/for_demo_optl_pustaka.sql</code>.</p></header>
-<section class="card pad">
+<section class="card pad" id="db-demo">
   <h2>Database demo: <code>optl_pustaka</code></h2>
   <p>Dump <code>for_demo_optl_pustaka.sql</code> berisi struktur + data demo yang benar-benar dipakai
   saat demo: 11 akun (termasuk admin &amp; user demo), 11 penulis, 6 penerbit, 10 genre, 11 buku lengkap
@@ -186,6 +186,21 @@ CREATE TABLE collections (
   </div>
 </footer>
 <button class="to-top" id="toTop" aria-label="Kembali ke atas"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7M12 5v14"/></svg></button>
+
+<div class="toc" id="toc">
+  <button class="toc-tab" id="tocTab" aria-expanded="false" aria-controls="tocPanel" aria-haspopup="true">
+    <span class="toc-tab-ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h6v6H4zM14 14h6v6h-6zM7 10v4a2 2 0 0 0 2 2h5M17 14v-4a2 2 0 0 0-2-2h-5"/></svg></span>
+    <span class="toc-tab-tx">Di halaman ini</span>
+    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+  </button>
+  <nav class="toc-panel" id="tocPanel" aria-label="Daftar isi halaman" hidden>
+    <div class="toc-head">
+      <span>Di halaman ini</span>
+      <button class="icon-btn toc-close" aria-label="Tutup daftar isi"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div class="toc-list"><a class="toc-link" href="#db-demo" data-toc-link data-target="db-demo">Database demo</a><a class="toc-link" href="#sql-view" data-toc-link data-target="sql-view">VIEW v_books_catalog — jantung katalog</a><a class="toc-link" href="#sql-katalog" data-toc-link data-target="sql-katalog">Pencarian katalog (public/catalog.php)</a><a class="toc-link" href="#sql-rak" data-toc-link data-target="sql-rak">Rak Saya: JOIN + filter milik sesi (public/my-shelf.php)</a><a class="toc-link" href="#sql-dashboard" data-toc-link data-target="sql-dashboard">Statistik dashboard (user &amp; admin)</a><a class="toc-link" href="#sql-upsert" data-toc-link data-target="sql-upsert">Upsert status rak (actions/collection-save.php)</a><a class="toc-link" href="#sql-progress" data-toc-link data-target="sql-progress">Progres baca &amp; lifecycle otomatis (actions/progress-save.php)</a><a class="toc-link" href="#sql-reset" data-toc-link data-target="sql-reset">Baca Ulang (actions/progress-reset.php)</a><a class="toc-link" href="#sql-guard" data-toc-link data-target="sql-guard">Guard admin terakhir (admin/users.php)</a><a class="toc-link" href="#sql-slug" data-toc-link data-target="sql-slug">Slug unik (includes/slug_helper.php)</a><a class="toc-link" href="#sql-ddl" data-toc-link data-target="sql-ddl">DDL inti + kunci unik</a></div>
+  </nav>
+</div>
 <script src="assets/vendor/mermaid.min.js"></script>
 <script src="assets/vendor/highlight.min.js"></script>
 <script src="assets/app.js"></script>

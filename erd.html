@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ERD — Dokumentasi PustakaDigital</title>
-<meta name="description" content="ERD interaktif database optl_pustaka: 7 tabel 3NF + VIEW v_books_catalog, gambar ERD asli, penjelasan tabel dan data seed.">
+<meta name="description" content="ERD interaktif database optl_pustaka: 7 tabel 3NF + VIEW v_books_catalog, aturan relasi, dan penjelasan tabel serta data seed.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
@@ -23,8 +23,8 @@
   </div>
 </header>
 <main id="main" class="wrap">
-<nav class="crumbs" aria-label="Posisi"><a href="index.html">Beranda</a><span class="sep">/</span><span>ERD</span></nav><header class="page-head"><h1>ERD & Skema Database optl_pustaka</h1><p class="lead">Tujuh tabel 3NF plus satu VIEW. Diagram relasi di bawah interaktif (zoom, geser, layar penuh), dan dua gambar ERD asli dari repo — <i>ERD Logical</i> dan <i>ERD Relasional</i> — ditampilkan untuk pembanding.</p></header>
-<section class="sec">
+<nav class="crumbs" aria-label="Posisi"><a href="index.html">Beranda</a><span class="sep">/</span><span>ERD</span></nav><header class="page-head"><h1>ERD & Skema Database optl_pustaka</h1><p class="lead">Tujuh tabel 3NF plus satu VIEW, mengikuti ERD final branch <code>optl/rombak-total</code>. Diagram relasi di bawah interaktif — bisa di-zoom, digeser, dan dibuka layar penuh — lengkap dengan atribut, kunci, dan penjelasan tiap tabel.</p></header>
+<section class="sec" id="aturan">
   <div class="cols-2">
     <div class="card pad">
       <h3>Aturan relasi penting</h3>
@@ -44,7 +44,7 @@
     </div>
   </div>
 </section>
-<section class="sec">
+<section class="sec" id="diagram">
   <h2>Diagram Relasi (mermaid)</h2>
   <figure class="diag"><div class="diag-tools"><button class="chip d-zoom" data-step="1" aria-label="Perbesar"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5M11 8.5v5"/></svg></button><button class="chip d-zoom" data-step="-1" aria-label="Perkecil"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.2-4.2M8.5 11h5"/></svg></button><button class="chip d-reset" aria-label="Reset tampilan"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 6M4 10V5m0 5h5"/></svg></button><button class="chip d-full" aria-label="Layar penuh"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div><div class="diag-scroll" style="max-height:70vh"><div class="diag-inner"><pre class="mermaid">erDiagram
     USERS ||--o{ COLLECTIONS : &quot;menyimpan&quot;
@@ -118,14 +118,7 @@
         text description
     }</pre></div></div><figcaption class="muted">ERD mermaid — klik, zoom, atau buka layar penuh untuk membaca atribut.</figcaption></figure>
 </section>
-<section class="sec">
-  <h2>ERD Asli dari Repo</h2>
-  <div class="cols-2">
-    <figure class="shot-card"><img loading="lazy" src="assets/img/erd-logical.jpg" alt="ERD Logical dari repo"><figcaption>ERD Logical.jpg (gambar asli repo)</figcaption></figure>
-    <figure class="shot-card"><img loading="lazy" src="assets/img/erd-relasional.jpg" alt="ERD Relasional dari repo"><figcaption>ERD Relasional.jpg (gambar asli repo)</figcaption></figure>
-  </div>
-</section>
-<section class="sec">
+<section class="sec" id="penjelasan">
   <h2>Penjelasan Tiap Tabel</h2>
   <div class="grid-2"><div class="card pad tbl-card"><h3><code>users</code></h3><p class="tag">Akun aplikasi</p><p>Email unik sebagai identitas login, password_hash Bcrypt ($2y$12), role admin/member, dan is_active untuk penonaktifan (soft-delete). Akun demo: admin@pustaka.com dan andi@email.com.</p></div><div class="card pad tbl-card"><h3><code>publishers</code></h3><p class="tag">Master penerbit</p><p>Nama + slug unik + kota. Tidak bisa dihapus (BR-06.5); datalist kota berasal dari includes/data_helper.php.</p></div><div class="card pad tbl-card"><h3><code>genres</code></h3><p class="tag">Master kategori</p><p>Sepuluh genre seed (Teknologi, Novel, Sains, …). name unik dan menjadi basis filter katalog.</p></div><div class="card pad tbl-card"><h3><code>authors</code></h3><p class="tag">Master penulis</p><p>Nama + slug unik + negara + bio. Profil publik author.php?slug=… membaca tabel ini.</p></div><div class="card pad tbl-card"><h3><code>books</code></h3><p class="tag">Katalog buku</p><p>Inti sistem: FK ke author/publisher/genre, slug & ISBN unik, storage_path {book_id}.pdf, checksum SHA-256, page_count, cover_path, is_active sebagai soft-delete.</p></div><div class="card pad tbl-card"><h3><code>collections</code></h3><p class="tag">Rak Saya</p><p>Satu baris per (user_id, book_id) — UNIQUE uq_collections_user_book. Empat status enum + status_source system/user yang mengatur lifecycle BR-03.</p></div><div class="card pad tbl-card"><h3><code>reading_progress</code></h3><p class="tag">Progres baca</p><p>Hanya last_page per (user_id, book_id) — UNIQUE uq_progress_user_book. Persentase tidak pernah disimpan (BR-04.1).</p></div><div class="card pad tbl-card"><h3><code>v_books_catalog</code></h3><p class="tag">VIEW katalog</p><p>Gabungan books+authors+genres+publishers. Semua halaman publik cukup SELECT * — 0 JOIN di PHP (BR-05.2).</p></div></div>
 </section>
@@ -137,6 +130,21 @@
   </div>
 </footer>
 <button class="to-top" id="toTop" aria-label="Kembali ke atas"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7M12 5v14"/></svg></button>
+
+<div class="toc" id="toc">
+  <button class="toc-tab" id="tocTab" aria-expanded="false" aria-controls="tocPanel" aria-haspopup="true">
+    <span class="toc-tab-ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h6v6H4zM14 14h6v6h-6zM7 10v4a2 2 0 0 0 2 2h5M17 14v-4a2 2 0 0 0-2-2h-5"/></svg></span>
+    <span class="toc-tab-tx">Di halaman ini</span>
+    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+  </button>
+  <nav class="toc-panel" id="tocPanel" aria-label="Daftar isi halaman" hidden>
+    <div class="toc-head">
+      <span>Di halaman ini</span>
+      <button class="icon-btn toc-close" aria-label="Tutup daftar isi"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div class="toc-list"><a class="toc-link" href="#aturan" data-toc-link data-target="aturan">Aturan Relasi &amp; Seed</a><a class="toc-link" href="#diagram" data-toc-link data-target="diagram">Diagram Relasi (mermaid)</a><a class="toc-link" href="#penjelasan" data-toc-link data-target="penjelasan">Penjelasan Tiap Tabel</a></div>
+  </nav>
+</div>
 <script src="assets/vendor/mermaid.min.js"></script>
 <script src="assets/vendor/highlight.min.js"></script>
 <script src="assets/app.js"></script>

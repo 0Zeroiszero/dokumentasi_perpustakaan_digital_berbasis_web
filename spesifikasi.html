@@ -24,7 +24,7 @@
 </header>
 <main id="main" class="wrap">
 <nav class="crumbs" aria-label="Posisi"><a href="index.html">Beranda</a><span class="sep">/</span><span>Spesifikasi</span></nav><header class="page-head"><h1>SPEC Ticket & Pengujian Otomatis</h1><p class="lead">Rombak total dieksekusi lewat sebelas ticket SPEC lokal di <code>docs/specs/</code> — masing-masing adalah kontrak verifikasi sebelum commit. Dua skrip uji menjaga aturan tetap benar: <code>tests/smoke.php</code> (perilaku) dan <code>tests/viewport.py</code> (tampilan).</p></header>
-<section class="sec"><div class="grid-2">
+<section class="sec" id="daftar-spec"><div class="grid-2">
 <div class="card pad spec">
   <header><span class="badge">SPEC-DB</span><h3>Fondasi database, berkas, dan helper</h3></header>
   <p>CREATE DATABASE optl_pustaka + 7 tabel 3NF + VIEW v_books_catalog + seed, ramah phpMyAdmin (InnoDB, utf8mb4, PK INT UNSIGNED AUTO_INCREMENT). collections & reading_progress UNIQUE(user_id, book_id); FK RESTRICT; books.isbn dipertahankan. Helper: config.php (BASE_URL, url(), asset()), db.php (q/rows/row/scalar/e), auth_guard.php, slug_helper.php (generate_unique_slug), cover_helper.php (sampul GD 600×800), book_helper.php (peta status).</p>
@@ -69,7 +69,7 @@
   <header><span class="badge">SPEC-10</span><h3>Status pengguna (admin)</h3></header>
   <p>admin/users.php: daftar akun + tombol Aktif/Nonaktif POST + konfirmasi; tanpa hapus keras, tanpa edit profil orang lain. Guard: admin tidak dapat menonaktifkan dirinya sendiri; admin aktif terakhir tidak dapat dinonaktifkan.</p>
 </div></div></section>
-<section class="sec">
+<section class="sec" id="uji">
   <h2>Menjalankan Uji</h2>
   <div class="cols-2">
     <div class="card pad">
@@ -87,6 +87,9 @@
       modal bisa discroll, judul kartu ter-clamp 2 baris, dan layout 320–1366px tidak rusak.</p>
     </div>
   </div>
+</section>
+<section class="sec" id="pemetaan">
+  <h2>Pemetaan Rule ke Verifikasi</h2>
   <p class="lead">Hasil keduanya adalah dasar tabel pemetaan rule → verifikasi berikut (sama dengan dokumen Business Rules):</p>
   <div class="table-wrap"><table><thead><tr><th>Rule</th><th>Uji Otomatis</th></tr></thead><tbody><tr><td>BR-01/02 Auth, CSRF, next</td><td>smoke.php: login gagal/sukses, nonaktif, CSRF 419, next eksternal ditolak</td></tr><tr><td>BR-03 Status lifecycle</td><td>smoke.php: system→reading, auto-finished, user tidak diubah, reset</td></tr><tr><td>BR-04 Progres & reader</td><td>viewport.py: DPR 2, kanvas berisi, iframe auto-save</td></tr><tr><td>BR-05 Pencarian</td><td>smoke.php: q/kategori/sort katalog & admin & Rak Saya</td></tr><tr><td>BR-06 Upload/master</td><td>smoke.php: PDF valid/palsu, cover valid/palsu, slug, datalist</td></tr><tr><td>BR-07 Guard admin</td><td>smoke.php: self-disable, admin terakhir, reset password</td></tr><tr><td>BR-08 Mobile UI</td><td>viewport.py: 320–1366px, dropdown, sticky, modal scroll, judul clamp</td></tr></tbody></table></div>
 </section>
@@ -98,6 +101,21 @@
   </div>
 </footer>
 <button class="to-top" id="toTop" aria-label="Kembali ke atas"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7M12 5v14"/></svg></button>
+
+<div class="toc" id="toc">
+  <button class="toc-tab" id="tocTab" aria-expanded="false" aria-controls="tocPanel" aria-haspopup="true">
+    <span class="toc-tab-ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h6v6H4zM14 14h6v6h-6zM7 10v4a2 2 0 0 0 2 2h5M17 14v-4a2 2 0 0 0-2-2h-5"/></svg></span>
+    <span class="toc-tab-tx">Di halaman ini</span>
+    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+  </button>
+  <nav class="toc-panel" id="tocPanel" aria-label="Daftar isi halaman" hidden>
+    <div class="toc-head">
+      <span>Di halaman ini</span>
+      <button class="icon-btn toc-close" aria-label="Tutup daftar isi"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div class="toc-list"><a class="toc-link" href="#daftar-spec" data-toc-link data-target="daftar-spec">11 Ticket SPEC</a><a class="toc-link" href="#uji" data-toc-link data-target="uji">Menjalankan Uji</a><a class="toc-link" href="#pemetaan" data-toc-link data-target="pemetaan">Pemetaan Rule ke Verifikasi</a></div>
+  </nav>
+</div>
 <script src="assets/vendor/mermaid.min.js"></script>
 <script src="assets/vendor/highlight.min.js"></script>
 <script src="assets/app.js"></script>

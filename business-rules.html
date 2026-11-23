@@ -56,7 +56,7 @@
   <summary><span class="badge">BR-08</span><b>UI & Perangkat</b><span class="acc-n">5 aturan</span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
   <div class="acc-body"><ul class="rule-list"><li><code>BR-08.1</code><p>Setelah login, semua halaman memakai shell sidebar + topbar yang sama; navbar publik hanya untuk tamu.</p></li><li><code>BR-08.2</code><p>Beranda dihapus dari sidebar; Rak Saya berada di sidebar untuk user maupun admin, buku di dropdown profil.</p></li><li><code>BR-08.3</code><p>Di mobile, subjudul topbar hilang, judul satu baris dengan elipsis, profil menjadi avatar bulat, dropdown tidak overflow viewport.</p></li><li><code>BR-08.4</code><p>Judul kartu dibatasi dua baris dengan elipsis; tooltip memuat judul lengkap.</p></li><li><code>BR-08.5</code><p>Modal panjang (Buku, Filter Rak Saya) harus bisa discroll dengan footer tetap terlihat.</p></li></ul></div>
 </details></section>
-<section class="sec">
+<section class="sec" id="lifecycle">
   <h2>Lifecycle Status Rak (BR-03)</h2>
   <p class="lead">Empat status (<code>to_read</code>, <code>reading</code>, <code>finished</code>, <code>not_interested</code>)
   dengan dua sumber: <code>system</code> dan <code>user</code>. Sistem hanya mengisi baris yang belum ada dan
@@ -80,17 +80,17 @@
         mengubah baris ber-source user
     end note</pre></div></div><figcaption class="muted">State diagram lifecycle status Rak Saya.</figcaption></figure>
 </section>
-<section class="sec">
+<section class="sec" id="matriks">
   <h2>Matriks Akses Aktor</h2>
   <div class="table-wrap"><table><thead><tr><th>Halaman / Aksi</th><th>Tamu</th><th>User (member)</th><th>Admin</th></tr></thead><tbody><tr><td>Landing, katalog, detail, profil penulis, profil penerbit, login, register</td><td>Ya</td><td>Ya</td><td>Ya</td></tr><tr><td>Rak Saya, reader, profil, dashboard user</td><td>Login → ?next=</td><td>Ya</td><td>Dashboard user → dashboard admin</td></tr><tr><td>Dashboard admin, Kelola Buku/Pengguna/Publisher/Penulis</td><td>Login</td><td>Dashboard user</td><td>Ya</td></tr><tr><td>stream.php</td><td>403</td><td>Ya</td><td>Ya</td></tr><tr><td>Aksi tulis (POST)</td><td>Ditolak</td><td>Milik sendiri saja</td><td>Semua data kecuali guard admin</td></tr></tbody></table></div>
 </section>
-<section class="sec">
+<section class="sec" id="turunan">
   <h2>Turunan Data &amp; Indikator</h2>
   <p class="lead">Angka di dashboard dihitung langsung dari tabel saat render — tidak ada kolom persentase
   tersimpan dan tidak ada data dummy.</p>
   <div class="table-wrap"><table><thead><tr><th>Indikator</th><th>Sumber</th><th>Aturan</th></tr></thead><tbody><tr><td>Persentase buku</td><td>collections.status, reading_progress.last_page, books.page_count</td><td>Dihitung saat render, tidak disimpan</td></tr><tr><td>Jumlah Rak Saya</td><td>COUNT(collections) per user</td><td>Tidak boleh data dummy</td></tr><tr><td>Sedang/Selesai dibaca</td><td>COUNT per status</td><td>Dashboard user memakai query langsung</td></tr><tr><td>Total buku</td><td>COUNT(books WHERE is_active=1)</td><td>Dashboard admin & user</td></tr><tr><td>Katalog</td><td>VIEW v_books_catalog</td><td>0 JOIN di PHP</td></tr><tr><td>Checksum berkas</td><td>hash_file('sha256')</td><td>Dihitung saat unggah/migrasi</td></tr></tbody></table></div>
 </section>
-<section class="sec">
+<section class="sec" id="pemetaan">
   <h2>Pemetaan Rule ke Verifikasi</h2>
   <p class="lead">Dokumen business rules menetapkan alur perubahan: ubah kode → perbarui rule di dokumen →
   jalankan smoke dan viewport → commit.</p>
@@ -104,6 +104,21 @@
   </div>
 </footer>
 <button class="to-top" id="toTop" aria-label="Kembali ke atas"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7M12 5v14"/></svg></button>
+
+<div class="toc" id="toc">
+  <button class="toc-tab" id="tocTab" aria-expanded="false" aria-controls="tocPanel" aria-haspopup="true">
+    <span class="toc-tab-ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h6v6H4zM14 14h6v6h-6zM7 10v4a2 2 0 0 0 2 2h5M17 14v-4a2 2 0 0 0-2-2h-5"/></svg></span>
+    <span class="toc-tab-tx">Di halaman ini</span>
+    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+  </button>
+  <nav class="toc-panel" id="tocPanel" aria-label="Daftar isi halaman" hidden>
+    <div class="toc-head">
+      <span>Di halaman ini</span>
+      <button class="icon-btn toc-close" aria-label="Tutup daftar isi"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div class="toc-list"><a class="toc-link" href="#br-01" data-toc-link data-target="br-01">BR-01 · Autentikasi &amp; Akun</a><a class="toc-link" href="#br-02" data-toc-link data-target="br-02">BR-02 · Hak Akses &amp; Keamanan</a><a class="toc-link" href="#br-03" data-toc-link data-target="br-03">BR-03 · Status Rak Saya (Lifecycle)</a><a class="toc-link" href="#br-04" data-toc-link data-target="br-04">BR-04 · Progres Baca</a><a class="toc-link" href="#br-05" data-toc-link data-target="br-05">BR-05 · Katalog &amp; Pencarian</a><a class="toc-link" href="#br-06" data-toc-link data-target="br-06">BR-06 · Berkas &amp; Master Data</a><a class="toc-link" href="#br-07" data-toc-link data-target="br-07">BR-07 · Guard Admin</a><a class="toc-link" href="#br-08" data-toc-link data-target="br-08">BR-08 · UI &amp; Perangkat</a><a class="toc-link" href="#lifecycle" data-toc-link data-target="lifecycle">Lifecycle Status Rak</a><a class="toc-link" href="#matriks" data-toc-link data-target="matriks">Matriks Akses</a><a class="toc-link" href="#turunan" data-toc-link data-target="turunan">Turunan Data</a><a class="toc-link" href="#pemetaan" data-toc-link data-target="pemetaan">Pemetaan Verifikasi</a></div>
+  </nav>
+</div>
 <script src="assets/vendor/mermaid.min.js"></script>
 <script src="assets/vendor/highlight.min.js"></script>
 <script src="assets/app.js"></script>
